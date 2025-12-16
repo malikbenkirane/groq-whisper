@@ -79,9 +79,7 @@ func (s sampler) consume(ctx context.Context) (err error) {
 			if err = f.Close(); err != nil {
 				return fmt.Errorf("close chunk %q: %w", pr, err)
 			}
-			p3 := outPath(c.ts, outMp3)
-			s.log.Info("converting new chunk", zap.String("path", p3))
-			err = convert(pr, p3, strconv.Itoa(int(s.sample)/2))
+			err = convert(c.ts, strconv.Itoa(int(s.sample)))
 			if err != nil {
 				return fmt.Errorf("convert: %w", err)
 			}
@@ -156,16 +154,23 @@ loop:
 type outType int
 
 const (
-	outMp3 outType = iota
+	outFlac outType = iota
+	outMp3
 	outRaw
 )
 
-func outPath(ts time.Time, t outType) string {
-	ext := "mp3"
-	if t == outRaw {
-		ext = "raw"
+func (t outType) String() string {
+	if t == outMp3 {
+		return "mp3"
 	}
-	return fmt.Sprintf("%s.%s", ts.Format("20060102150405"), ext)
+	if t == outFlac {
+		return "flac"
+	}
+	return "raw"
+}
+
+func outPath(ts time.Time, t outType) string {
+	return fmt.Sprintf("%s.%s", ts.Format("20060102150405"), t)
 }
 
 type chunk struct {
@@ -173,26 +178,48 @@ type chunk struct {
 	ts  time.Time
 }
 
-func convert(raw, mp3, freq string) (err error) {
-	_, err = os.Stat(mp3)
-	if err == nil {
-		if err = os.Remove(mp3); err != nil {
-			return fmt.Errorf("remove %q: %w", mp3, err)
-		}
-	}
+func convert(ts time.Time, freq string) (err error) {
+	raw, mp3 := outPath(ts, outRaw), outPath(ts, outMp3)
 	args := []string{
 		"-f", "s16le",
 		"-ar", freq,
-		"-ac", "2",
+		"-ac", "1",
 		"-i", raw, mp3,
 	}
-	fmt.Println(append([]string{"ffmpeg"}, args...))
-	cmd := exec.Command("ffmpeg", args...)
-	// cmd.Stdout = os.Stdout
-	// cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		return fmt.Errorf("exec ffmpeg: %w", err)
+	if err = ffmpeg(mp3, args...); err != nil {
+		return fmt.Errorf("ffmpeg %q->%q: %w", raw, mp3, err)
+	}
+	flac := outPath(ts, outFlac)
+	args = []string{
+		"-i", mp3,
+		"-ar", freq,
+		"-ac", "1",
+		"-map", "0:a",
+		"-c:a", "flac",
+		flac,
+	}
+	if err = ffmpeg(flac, args...); err != nil {
+		return fmt.Errorf("ffmpeg %q->%q: %w", mp3, flac, err)
 	}
 	return nil
+}
+
+func ffmpeg(rm string, args ...string) (err error) {
+	_, err = os.Stat(rm)
+	if err == nil {
+		if err = os.Remove(rm); err != nil {
+			return fmt.Errorf("remove %q: %w", rm, err)
+		}
+	}
+	fmt.Println(append([]string{"ffmpeg"}, args...))
+	{
+		cmd := exec.Command("ffmpeg", args...)
+		//cmd.Stdout = os.Stdout
+		//cmd.Stderr = os.Stderr
+		err = cmd.Run()
+		if err != nil {
+			return fmt.Errorf("exec ffmpeg: %w", err)
+		}
+		return nil
+	}
 }
