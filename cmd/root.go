@@ -19,12 +19,9 @@ func NewCLI() *cobra.Command {
 }
 
 func newLogger(debug bool) *zap.Logger {
-	lvl := zap.InfoLevel
+	config := zap.NewProductionConfig()
 	if debug {
-		lvl = zap.DebugLevel
-	}
-	config := zap.Config{
-		Level: zap.NewAtomicLevelAt(lvl),
+		config = zap.NewDevelopmentConfig()
 	}
 	log, err := config.Build()
 	if err != nil {
