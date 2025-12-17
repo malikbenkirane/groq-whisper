@@ -32,7 +32,9 @@
     "TechincalDebt": [],
     "TechnicalDebtOptimizationOpportunity": [],
     "TechnicalDebtRefactoringNeeded": [],
-    "TechnicalDebtWorkaround": [],
+    "TechnicalDebtWorkaround": [
+	    "newLogger panic"
+    ],
     "Testing": [],
     "TestingFailing": [],
     "TestingIntegrationNeeded": [],
