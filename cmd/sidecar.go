@@ -133,12 +133,14 @@ func (gc *groqClient) post(audio, model string) (err error) {
 	return nil
 }
 
-func newCommandSidecar(log *zap.Logger) *cobra.Command {
-	var dry *bool
+func newCommandSidecar() *cobra.Command {
+	var dry, debug *bool
 	cmd := &cobra.Command{
 		Use:     "sidecar",
 		Aliases: []string{"watch", "w", "s"},
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			log := newLogger(*debug)
+
 			quit := make(chan os.Signal, 1)
 			signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
@@ -232,5 +234,6 @@ func newCommandSidecar(log *zap.Logger) *cobra.Command {
 		},
 	}
 	dry = cmd.Flags().Bool("dry", false, "don't post to groq")
+	debug = cmd.Flags().Bool("debug", false, "set log level at debug")
 	return cmd
 }

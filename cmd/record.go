@@ -10,15 +10,16 @@ import (
 	"groq/internal/sampler"
 
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 )
 
-func newCommandRecord(log *zap.Logger) *cobra.Command {
+func newCommandRecord() *cobra.Command {
 	var freq *int
+	var debug *bool
 	cmd := &cobra.Command{
 		Use:     "record",
 		Aliases: []string{"rec", "r"},
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			log := newLogger(*debug)
 			quit := make(chan os.Signal, 1)
 			signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
@@ -33,5 +34,6 @@ func newCommandRecord(log *zap.Logger) *cobra.Command {
 		},
 	}
 	freq = cmd.Flags().IntP("freq", "f", 16000, "sample rate")
+	debug = cmd.Flags().Bool("debug", false, "set log level at debug")
 	return cmd
 }

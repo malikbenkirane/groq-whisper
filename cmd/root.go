@@ -12,10 +12,23 @@ func NewCLI() *cobra.Command {
 			return cmd.Help()
 		},
 	}
-	log, err := zap.NewDevelopment()
+	cmd.AddCommand(
+		newCommandRecord(),
+		newCommandSidecar())
+	return cmd
+}
+
+func newLogger(debug bool) *zap.Logger {
+	lvl := zap.InfoLevel
+	if debug {
+		lvl = zap.DebugLevel
+	}
+	config := zap.Config{
+		Level: zap.NewAtomicLevelAt(lvl),
+	}
+	log, err := config.Build()
 	if err != nil {
 		panic(err)
 	}
-	cmd.AddCommand(newCommandRecord(log), newCommandSidecar(log))
-	return cmd
+	return log
 }
