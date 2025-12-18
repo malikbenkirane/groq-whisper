@@ -4,4 +4,4 @@ Brainstorming Whisperer
 
 ## Installation
 
-See **[docs/install.md]**
+See **[docs/install.md](docs/install.md)**
