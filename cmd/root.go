@@ -15,7 +15,8 @@ func NewCLI(version string) *cobra.Command {
 	cmd.AddCommand(
 		newCommandRecord(),
 		newCommandSidecar(),
-		newCommandVersion(version))
+		newCommandVersion(version),
+		newCommandUpgrade(version))
 	return cmd
 }
 
