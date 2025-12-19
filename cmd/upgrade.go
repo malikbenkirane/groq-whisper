@@ -39,6 +39,7 @@ func remoteVersion() (string, error) {
 				continue
 			}
 			upstreamVersion = version
+			return nil
 		}
 		return fmt.Errorf("unable to retrieve version from %q", versionUrl)
 	}()
