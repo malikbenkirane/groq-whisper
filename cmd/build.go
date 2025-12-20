@@ -35,7 +35,7 @@ If you are an expert in cross-compilation you should be able to make it on any
 platform, but a the moment what was tested is documented in [docs/install.md].
 
 When using --push option, make sure either [gcloud] is available through your
-PATH setting or google-cloud-sdk is in your home directory. 
+PATH environment variable (e.g. export PATH=$PATH:$HOME/google-cloud-sdk/bin).
 		`,
 		Args: func(cmd *cobra.Command, args []string) (err error) {
 			if *push {
@@ -122,17 +122,7 @@ func defaultGcloudProject() (project string, err error) {
 func gcloud(out io.Writer, args ...string) error {
 	path, err := exec.LookPath("gcloud")
 	if err != nil {
-		home, err := os.UserHomeDir()
-		if err != nil {
-			return fmt.Errorf("user home dir: %w", err)
-		}
-		parts := strings.Split(home, ":")
-		if len(parts) != 2 {
-			return fmt.Errorf("unable to extract volume name from %q", home)
-		}
-		volume := parts[0] + ":"
-		path = path_util.Join(volume, "msys64", "home", os.Getenv("USER"))
-		path = path_util.Join(path, "google-cloud-sdk", "bin", "gcloud")
+		return fmt.Errorf("look path gcloud: %w", err)
 	}
 	cmd := exec.Command(path, args...)
 	cmd.Stdout = os.Stdout
