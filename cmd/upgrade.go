@@ -49,6 +49,10 @@ func remoteVersion() (string, error) {
 	return upstreamVersion, nil
 }
 
+func bucketFile(remote, version string) string {
+	return fmt.Sprintf("%sgroq-%s.exe", remote, version)
+}
+
 func upgrade(current string) (bool, string, error) {
 	upstream, err := remoteVersion()
 	if err != nil {
@@ -59,7 +63,7 @@ func upgrade(current string) (bool, string, error) {
 	}
 	if err := func() (err error) {
 		var b bytes.Buffer
-		upgrade := fmt.Sprintf("%sgroq-%s.exe", remoteBucket, upstream)
+		upgrade := bucketFile(remoteBucket, upstream)
 		resp, err := http.Get(upgrade)
 		if err != nil {
 			return fmt.Errorf("http get %q: %w", upgrade, err)
