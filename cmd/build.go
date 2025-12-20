@@ -122,8 +122,17 @@ func defaultGcloudProject() (project string, err error) {
 func gcloud(out io.Writer, args ...string) error {
 	path, err := exec.LookPath("gcloud")
 	if err != nil {
-		home := "/" + path_util.Join("home", os.Getenv("USER"))
-		path = path_util.Join(home, "google-cloud-sdk", "bin", "gcloud")
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return fmt.Errorf("user home dir: %w", err)
+		}
+		parts := strings.Split(home, ":")
+		if len(parts) != 2 {
+			return fmt.Errorf("unable to extract volume name from %q", home)
+		}
+		volume := parts[0] + ":"
+		path = path_util.Join(volume, "msys64", "home", os.Getenv("USER"))
+		path = path_util.Join(path, "google-cloud-sdk", "bin", "gcloud")
 	}
 	cmd := exec.Command(path, args...)
 	cmd.Stdout = os.Stdout
