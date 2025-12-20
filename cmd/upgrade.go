@@ -13,7 +13,7 @@ import (
 )
 
 const versionUrl = "https://raw.githubusercontent.com/malikbenkirane/groq-whisper/refs/heads/main/version.go"
-const remoteBucket = "https://storage.googleapis.com/groq-whisper/"
+const remoteBucket = "https://storage.googleapis.com/groq-whisper"
 
 func remoteVersion() (string, error) {
 	var upstreamVersion string
@@ -50,7 +50,7 @@ func remoteVersion() (string, error) {
 }
 
 func bucketFile(remote, version string) string {
-	return fmt.Sprintf("%sgroq-%s.exe", remote, version)
+	return fmt.Sprintf("%s/groq-%s.exe", remote, version)
 }
 
 func upgrade(current string) (bool, string, error) {
