@@ -122,10 +122,7 @@ func defaultGcloudProject() (project string, err error) {
 func gcloud(out io.Writer, args ...string) error {
 	path, err := exec.LookPath("gcloud")
 	if err != nil {
-		home, err := os.UserHomeDir()
-		if err != nil {
-			return fmt.Errorf("os user home dir: %w", err)
-		}
+		home := "/" + path_util.Join("home", os.Getenv("USER"))
 		path = path_util.Join(home, "google-cloud-sdk", "bin", "gcloud")
 	}
 	cmd := exec.Command(path, args...)
