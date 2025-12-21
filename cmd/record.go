@@ -7,7 +7,7 @@ import (
 	"syscall"
 	"time"
 
-	"groq/internal/sampler"
+	"github.com/malikbenkirane/groq-whisper/internal/sampler"
 
 	"github.com/spf13/cobra"
 )
