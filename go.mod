@@ -1,4 +1,4 @@
-module groq
+module github.com/malikbenkirane/groq-whisper
 
 go 1.25.4
 
