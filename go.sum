@@ -9,8 +9,8 @@ github.com/gordonklaus/portaudio v0.0.0-20250206071425-98a94950218b h1:WEuQWBxel
 github.com/gordonklaus/portaudio v0.0.0-20250206071425-98a94950218b/go.mod h1:esZFQEUwqC+l76f2R8bIWSwXMaPbp79PppwZ1eJhFco=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
-github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251222185950-32a2d529e0e1 h1:Qhy/gnD4Dt90tC7mMGkqj2Kd64N3ZRrnEFfZ5+rzRFw=
-github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251222185950-32a2d529e0e1/go.mod h1:7TF6D1U+4jXlynqtMcBqgCkQpxxnKBBAUL1RV9vGcRA=
+github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251222191354-bacaea58032a h1:N4AeNcLUouMYL86jW/as4+wN+exntUB1ID4/RMiDnnQ=
+github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251222191354-bacaea58032a/go.mod h1:7TF6D1U+4jXlynqtMcBqgCkQpxxnKBBAUL1RV9vGcRA=
 github.com/mattn/go-runewidth v0.0.16 h1:E5ScNMtiwvlvB5paMFdw9p4kSQzbXFikJ5SQO6TULQc=
 github.com/mattn/go-runewidth v0.0.16/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
 github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db h1:62I3jR2EmQ4l5rM/4FEfDWcRD+abF5XlKShorW5LRoQ=
