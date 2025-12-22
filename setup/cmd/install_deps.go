@@ -18,13 +18,13 @@ func newCommandInstallDeps() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("new installer: %w", err)
 			}
-			return i.Download()
+			return i.Install()
 		},
 	}
 
 	bucket = cmd.Flags().String("bucket", "groq-whisper", "gcp ffmpeg bucket name")
 	ffmpeg = cmd.Flags().String("ffmpeg-7z-object", "ffmpeg-8.0.1-full_build.7z", "gcp ffmpeg 7z object name")
-	path = cmd.Flags().String("path", "groq-whisper", "installation path")
+	path = cmd.Flags().String("path", "groq-deps", "installation path")
 
 	return cmd
 }
