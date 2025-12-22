@@ -30,7 +30,7 @@ require (
 
 require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251222175230-c9ab1c8d31b6
+	github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251222175309-64d4e3c973d7
 	github.com/spf13/pflag v1.0.10 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/sys v0.39.0 // indirect
