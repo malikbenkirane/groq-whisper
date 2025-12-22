@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"archive/zip"
 	"bytes"
 	"errors"
 	"fmt"
@@ -12,6 +13,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/malikbenkirane/groq-whisper/setup/pkg/build"
+	"github.com/malikbenkirane/groq-whisper/setup/pkg/dcheck"
 	"github.com/malikbenkirane/groq-whisper/setup/pkg/gcloud"
 	"github.com/malikbenkirane/groq-whisper/setup/pkg/version"
 )
@@ -22,8 +24,47 @@ func newCommandDev() *cobra.Command {
 	}
 	cmd.AddCommand(
 		newCommandBuild(),
-	)
+		newCommandZip())
 	return cmd
+}
+
+func newCommandZip() *cobra.Command {
+	return &cobra.Command{
+		Use: "zip",
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			dst := fmt.Sprintf("groq-setup-%s.zip", version.Version)
+			f, err := os.Create(dst)
+			if err != nil {
+				return fmt.Errorf("create %q: %w", dst, err)
+			}
+
+			z := zip.NewWriter(f)
+			defer func() {
+				err = dcheck.Wrap(z.Close(), err, "close %q", dst)
+			}()
+
+			for _, object := range []string{"groq", "groq-setup"} {
+				exe := version.Executable(object, version.Version)
+				dst := "groq/" + exe
+				w, err := z.Create(dst)
+				if err != nil {
+					return fmt.Errorf("zip create %q: %w", dst, err)
+				}
+				f, err := os.Open(exe)
+				if err != nil {
+					return fmt.Errorf("open %q: %w", exe, err)
+				}
+				defer func() {
+					err = dcheck.Wrap(z.Close(), err, "close %q", dst)
+				}()
+				if _, err = io.Copy(w, f); err != nil {
+					return fmt.Errorf("copy to zip %q: %w", dst, err)
+				}
+			}
+
+			return nil
+		},
+	}
 }
 
 func newCommandBuild() *cobra.Command {
