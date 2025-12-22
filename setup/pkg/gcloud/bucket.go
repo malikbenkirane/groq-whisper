@@ -68,7 +68,7 @@ func (b bucket) Push(dst, src string) error {
 		}
 	}
 	dst = b.pushUrl(dst)
-	err := gcloud(nil, "storage", "cp", src, dst)
+	err := gcloud(nil, "storage", "cp", "file://"+src, dst)
 	if err != nil {
 		return fmt.Errorf("gcloud storage cp %q %q: %w", src, dst, err)
 	}
