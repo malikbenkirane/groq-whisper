@@ -16,7 +16,7 @@ func gcloud(out io.Writer, args ...string) error {
 	}
 	cmd := exec.Command(path, args...)
 	cmd.Stdout = os.Stdout
-	if out != nil {
+	if out == nil {
 		cmd.Stdout = out
 	}
 	cmd.Stderr = os.Stderr
