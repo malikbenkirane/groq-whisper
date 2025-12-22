@@ -23,12 +23,12 @@ https://storage.googleapis.com/groq-whisper/groq-setup-v0.8.1.zip
 
 3. Install dependencies
    ```bash
-   groq-setup-0.8.1.exe d
+   groq-setup-v0.8.1.exe d
    ```
 
 4. Install upgrades
    ```
-   groq-setup-0.8.1.exe i
+   groq-setup-v0.8.1.exe i
    ```
 
 Each time you want to upgrade you can either run
