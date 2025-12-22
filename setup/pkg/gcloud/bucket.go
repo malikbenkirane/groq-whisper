@@ -18,7 +18,8 @@ type Bucket interface {
 }
 
 type BucketConfig struct {
-	login bool
+	login   bool
+	project string
 }
 
 type BucketOption func(BucketConfig) BucketConfig
@@ -26,6 +27,13 @@ type BucketOption func(BucketConfig) BucketConfig
 func BucketWithLogin() BucketOption {
 	return func(bc BucketConfig) BucketConfig {
 		bc.login = true
+		return bc
+	}
+}
+
+func OptionBucketProject(project string) BucketOption {
+	return func(bc BucketConfig) BucketConfig {
+		bc.project = project
 		return bc
 	}
 }
@@ -68,7 +76,7 @@ func (b bucket) Push(dst, src string) error {
 		}
 	}
 	dst = b.pushUrl(dst)
-	err := gcloud(nil, "storage", "cp", "file://"+src, dst)
+	err := gcloud(nil, "storage", "cp", "--project", b.c.project, "file://"+src, dst)
 	if err != nil {
 		return fmt.Errorf("gcloud storage cp %q %q: %w", src, dst, err)
 	}
