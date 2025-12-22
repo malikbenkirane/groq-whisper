@@ -98,6 +98,8 @@ github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251222172522-7f88dd1ac565 
 github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251222172522-7f88dd1ac565/go.mod h1:7TF6D1U+4jXlynqtMcBqgCkQpxxnKBBAUL1RV9vGcRA=
 github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251222173455-f9d97ce50f69 h1:Fd5x0LJqJV20iX9WniNol9KAZ+Hdnq8C/Atcb7X9gE4=
 github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251222173455-f9d97ce50f69/go.mod h1:7TF6D1U+4jXlynqtMcBqgCkQpxxnKBBAUL1RV9vGcRA=
+github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251222174535-a71a5c2db20d h1:i1EOXP2bXRAB55ZZ0FOPTn9QWNmq6covWFpuaAt3aWY=
+github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251222174535-a71a5c2db20d/go.mod h1:7TF6D1U+4jXlynqtMcBqgCkQpxxnKBBAUL1RV9vGcRA=
 github.com/mattn/go-runewidth v0.0.16 h1:E5ScNMtiwvlvB5paMFdw9p4kSQzbXFikJ5SQO6TULQc=
 github.com/mattn/go-runewidth v0.0.16/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
 github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db h1:62I3jR2EmQ4l5rM/4FEfDWcRD+abF5XlKShorW5LRoQ=
