@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"path"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -43,8 +44,8 @@ func newCommandZip() *cobra.Command {
 				err = dcheck.Wrap(z.Close(), err, "close %q", dst)
 			}()
 
-			for _, object := range []string{"groq", "groq-setup"} {
-				exe := version.Executable(object, version.Version)
+			for _, object := range [][]string{{".", "groq"}, {"setup", "groq-setup"}} {
+				exe := path.Join(object[0], version.Executable(object[1], version.Version))
 				dst := "groq/" + exe
 				w, err := z.Create(dst)
 				if err != nil {
