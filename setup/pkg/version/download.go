@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 
 	"github.com/malikbenkirane/groq-whisper/setup/pkg/dcheck"
@@ -51,7 +52,7 @@ func UpgraderWithInstaller(prefix string) UpgraderOption {
 func DefaultUpgraderConfig() UpgraderConfig {
 	return UpgraderConfig{
 		VersionSrc: Url,
-		App:        "groq-whisper-setup",
+		App:        "groq",
 		Installer:  "groq-setup",
 	}
 }
@@ -101,11 +102,13 @@ func (u *upgrader) Upgrade() error {
 }
 
 func (u *upgrader) download(app, installer io.Writer) (appUpgrade, installerUpgrade *Upgrade, err error) {
+	slog.Debug("downloading", "app", u.c.App)
 	appUpgrade, err = u.downloadObject(app, u.c.App)
 	if err != nil {
 		err = fmt.Errorf("download app: %w", err)
 		return
 	}
+	slog.Debug("downloading", "installer", u.c.Installer)
 	installerUpgrade, err = u.downloadObject(installer, u.c.Installer)
 	if err != nil {
 		err = fmt.Errorf("download installer: %w", err)
