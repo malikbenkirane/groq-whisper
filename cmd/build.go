@@ -96,7 +96,7 @@ PATH environment variable (e.g. export PATH=$PATH:$HOME/google-cloud-sdk/bin).
 			if *gcloudLogin {
 				opts = append(opts, gcloud.BucketWithLogin())
 			}
-			bucket := gcloud.NewBucket(*gcpBucket)
+			bucket := gcloud.NewBucket(*gcpBucket, opts...)
 			for _, dst := range []string{exeGroq, exeSetup} {
 				fmt.Println("pushing", dst)
 				if err := bucket.Push(dst, dst); err != nil {
