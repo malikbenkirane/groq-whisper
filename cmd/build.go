@@ -45,13 +45,14 @@ func newCommandZip() *cobra.Command {
 			}()
 
 			for _, object := range [][]string{{".", "groq"}, {"setup", "groq-setup"}} {
-				exe := path.Join(object[0], version.Executable(object[1], version.Version))
+				exe := version.Executable(object[1], version.Version)
+				exePath := path.Join(object[0], exe)
 				dst := "groq/" + exe
 				w, err := z.Create(dst)
 				if err != nil {
 					return fmt.Errorf("zip create %q: %w", dst, err)
 				}
-				f, err := os.Open(exe)
+				f, err := os.Open(exePath)
 				if err != nil {
 					return fmt.Errorf("open %q: %w", exe, err)
 				}
