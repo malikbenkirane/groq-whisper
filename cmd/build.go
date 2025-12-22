@@ -7,25 +7,28 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	path_util "path"
 	"strings"
 
 	"github.com/spf13/cobra"
+
+	"github.com/malikbenkirane/groq-whisper/setup/pkg/build"
+	"github.com/malikbenkirane/groq-whisper/setup/pkg/gcloud"
+	"github.com/malikbenkirane/groq-whisper/setup/pkg/version"
 )
 
-func newCommandDev(version string) *cobra.Command {
+func newCommandDev() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "dev",
 	}
 	cmd.AddCommand(
-		newCommandBuild(version),
+		newCommandBuild(),
 	)
 	return cmd
 }
 
-func newCommandBuild(version string) *cobra.Command {
-	var push *bool
-	var gitRemote, gcpBucket, gcpProject, output *string
+func newCommandBuild() *cobra.Command {
+	var push, gcloudLogin *bool
+	var gitRemote, gcpBucket, gcpProject, outputGroq, outputSetup *string
 	cmd := &cobra.Command{
 		Use: "build",
 		Long: `
@@ -39,11 +42,17 @@ PATH environment variable (e.g. export PATH=$PATH:$HOME/google-cloud-sdk/bin).
 		`,
 		Args: func(cmd *cobra.Command, args []string) (err error) {
 			if *push {
-				for _, opt := range []*string{gcpBucket, gcpProject, gitRemote, output} {
+				for _, opt := range []*string{
+					gcpBucket,
+					gcpProject,
+					gitRemote,
+					outputGroq,
+					outputSetup,
+				} {
 					*opt = strings.TrimSpace(*opt)
 				}
 				if len(*gcpProject) == 0 {
-					*gcpProject, err = defaultGcloudProject()
+					*gcpProject, err = gcloud.DefaultGcloudProject()
 					if err != nil {
 						return fmt.Errorf("gcloud config get project: %w", err)
 					}
@@ -57,39 +66,54 @@ PATH environment variable (e.g. export PATH=$PATH:$HOME/google-cloud-sdk/bin).
 				if len(*gcpBucket) == 0 {
 					return errors.New("--gcp-bucket is expected with --push")
 				}
-				if len(*output) == 0 {
-					return errors.New("--output is expected")
+				if len(*outputSetup) == 0 {
+					return errors.New("--output-setup is expected")
+				}
+				if len(*outputGroq) == 0 {
+					return errors.New("--output-groq is expected")
 				}
 				return nil
 			}
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			if err = build(*output); err != nil {
+			nameGroq, _ := strings.CutSuffix(*outputGroq, ".exe")
+			nameSetup, _ := strings.CutSuffix(*outputSetup, ".exe")
+			exeGroq, exeSetup :=
+				version.Executable(nameGroq, version.Version),
+				version.Executable(nameSetup, version.Version)
+			if err = build.Build(".", exeGroq); err != nil {
 				return fmt.Errorf("go build: %w", err)
 			}
-			fmt.Println("built", version)
+			if err = build.Build("./setup", exeSetup); err != nil {
+				return fmt.Errorf("go build: %w", err)
+			}
+			fmt.Println("built", exeGroq, "and", exeSetup)
 			if !*push {
 				return nil
 			}
-			if err = gcloud(nil, "auth", "login"); err != nil {
-				return fmt.Errorf("gcloud auth login: %w", err)
+			opts := []gcloud.BucketOption{}
+			if *gcloudLogin {
+				opts = append(opts, gcloud.BucketWithLogin())
 			}
-			dst := bucketFile("gs://"+*gcpBucket, version)
-			if err = gcloud(nil, "storage", "cp", "groq.exe", dst); err != nil {
-				return fmt.Errorf("copy %q to %q: %w", *output, dst, err)
+			bucket := gcloud.NewBucket(*gcpBucket)
+			for _, dst := range []string{exeGroq, exeSetup} {
+				fmt.Println("pushing", dst)
+				if err := bucket.Push(dst, dst); err != nil {
+					return fmt.Errorf("push %q: %w", dst, err)
+				}
+				fmt.Println("pushed", dst)
 			}
-			fmt.Println("new version available at", bucketFile(
-				strings.Replace(remoteBucket, "groq-whisper", *gcpBucket, 1), version))
 			return nil
-
 		},
 	}
 	push = cmd.Flags().Bool("push", false, "push built version to upstream main and gcloud storage")
 	gitRemote = cmd.Flags().String("git-remote", "", "use first git remote if not set")
 	gcpBucket = cmd.Flags().String("gcp-bucket", "groq-whisper", "GCP storage bucket name")
 	gcpProject = cmd.Flags().String("gcp-project", "", "GCP project name (use default project if not set)")
-	output = cmd.Flags().String("output", "groq.exe", "go build output")
+	gcloudLogin = cmd.Flags().Bool("gcloud-login", false, "prompt gcloud auth login")
+	outputGroq = cmd.Flags().String("output-groq", "groq.exe", "go build output")
+	outputSetup = cmd.Flags().String("output-setup", "groq-setup.exe", "go build setup output")
 	return cmd
 }
 
@@ -109,43 +133,4 @@ func defaultGitRemote() (remote string, err error) {
 		return "", fmt.Errorf("git remote: %w", err)
 	}
 	return strings.TrimSpace(b.String()), nil
-}
-
-func defaultGcloudProject() (project string, err error) {
-	var b bytes.Buffer
-	if err = gcloud(&b, "config", "get", "project"); err != nil {
-		return "", fmt.Errorf("gcloud config get project: %w", err)
-	}
-	return strings.TrimSpace(b.String()), nil
-}
-
-func gcloud(out io.Writer, args ...string) error {
-	path, err := exec.LookPath("gcloud")
-	if err != nil {
-		return fmt.Errorf("look path gcloud: %w", err)
-	}
-	cmd := exec.Command(path, args...)
-	cmd.Stdout = os.Stdout
-	if out != nil {
-		cmd.Stdout = out
-	}
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("run %q: %w", path, err)
-	}
-	return nil
-}
-
-func build(output string) error {
-	path, err := exec.LookPath("go")
-	if err != nil {
-		path = path_util.Join("mingw64", "lib", "go", "bin", "go")
-	}
-	cmd := exec.Command(path, "build", "-o", output)
-	cmd.Stdout = os.Stdout
-	cmd.Stdin = os.Stdin
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("run go build with %q: %w", path, err)
-	}
-	return nil
 }
