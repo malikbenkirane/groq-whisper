@@ -173,7 +173,7 @@ func (u upgrade) handle() (err error) {
 	if err != nil && !errors.Is(err, os.ErrNotExist) {
 		return fmt.Errorf("stat %q: %w", exe, err)
 	}
-	if err != nil { // error is os.ErrNotExist
+	if err == nil {
 		exeBackup := Executable(u.name, Version)
 		if err := os.Rename(exe, exeBackup); err != nil {
 			return fmt.Errorf("backup %q to %q", exe, exeBackup)
