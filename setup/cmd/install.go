@@ -14,7 +14,7 @@ func newCommandInstall() *cobra.Command {
 		Use:     "install",
 		Aliases: []string{"i"},
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			if len(*path) > 0 {
+			if *path != "." {
 				err = os.MkdirAll(*path, 0700)
 				if err != nil {
 					return fmt.Errorf("mkdir %q: %w", *path, err)
@@ -37,7 +37,7 @@ func newCommandInstall() *cobra.Command {
 	cfg := version.DefaultUpgraderConfig()
 
 	bucket = cmd.Flags().String("bucket", "groq-whisper", "gcloud bucket name")
-	path = cmd.Flags().String("path", "", "installation path (default cwd)")
+	path = cmd.Flags().String("path", ".", "installation path (default cwd)")
 	appName = cmd.Flags().String("app-name", cfg.App, "groq whisper app name")
 	installerName = cmd.Flags().String("intaller-name", cfg.Installer, "groq whisper installer app name")
 	versionSource = cmd.Flags().String("version-source", cfg.VersionSrc, "version source url")
