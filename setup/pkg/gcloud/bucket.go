@@ -3,6 +3,7 @@ package gcloud
 import (
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 
 	"github.com/schollz/progressbar/v3"
@@ -53,6 +54,7 @@ type bucket struct {
 
 func (b bucket) Pull(dst io.Writer, name string) (err error) {
 	url := b.getUrl(name)
+	slog.Debug("pulling from", "bucket", b.name, "url", url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return fmt.Errorf("http get %q: %w", url, err)
