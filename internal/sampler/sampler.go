@@ -248,7 +248,7 @@ func (e Encoder) encode(rm string, args ...string) (err error) {
 	}
 	fmt.Println(append([]string{"ffmpeg"}, args...))
 	{
-		cmd := exec.Command("ffmpeg", args...)
+		cmd := exec.Command(e.ffmpegPath, args...)
 		//cmd.Stdout = os.Stdout
 		//cmd.Stderr = os.Stderr
 		err = cmd.Run()
