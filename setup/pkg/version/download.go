@@ -118,7 +118,8 @@ func (u *upgrader) download(app, installer io.Writer) (appUpgrade, installerUpgr
 }
 
 func (u upgrader) downloadObject(w io.Writer, object string) (*Upgrade, error) {
-	_, err := os.Stat(Executable(object, Version))
+	exe := Executable(object, u.version)
+	_, err := os.Stat(exe)
 	if err != nil && !errors.Is(err, os.ErrNotExist) {
 		return nil, fmt.Errorf("stat object %q %q: %w", object, Version, err)
 	}
@@ -133,7 +134,6 @@ func (u upgrader) downloadObject(w io.Writer, object string) (*Upgrade, error) {
 			object, u.version, Version)
 	}
 	// error is not exist
-	exe := Executable(object, u.version)
 	if err := u.b.Pull(w, exe); err != nil {
 		return nil, fmt.Errorf("bucket pull: %w", err)
 	}
