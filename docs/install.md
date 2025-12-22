@@ -8,21 +8,24 @@
 - wifi card and driver installed
 
 You should be able to download [groq-setup-v0.7.0.zip](
-https://storage.googleapis.com/groq-whisper/groq-setup-v0.7.0.zip
+https://storage.googleapis.com/groq-whisper/groq-setup-v0.7.2.zip
 ) to take care of all the steps mentioned below.
 
 1. extract the archive to `C:\Windows\System32`
 
 2. Open `cmd` as an administrator.
+   ```bash
+   cd groq
+   ```
 
 3. Install dependencies
    ```bash
-   groq-whisper-0.7.0.exe d
+   groq-whisper-0.7.2.exe d
    ```
 
 4. Install upgrades
    ```
-   groq-whisper-0.7.0.exe i
+   groq-whisper-0.7.2.exe i
    ```
 
 Each time you want to upgrade you can either run
