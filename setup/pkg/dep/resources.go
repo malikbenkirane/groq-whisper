@@ -28,7 +28,10 @@ func DefaultPortAudioDst() (*PortAudioDst, error) {
 	}
 	volume := parts[0] + ":"
 	return &PortAudioDst{
-		path: path.Join(volume, "Windows", "System32", "libportaudio.dll"),
+		path: strings.ReplaceAll(
+			path.Join(volume, "Windows", "System32", "libportaudio.dll"),
+			"/", "\\",
+		),
 	}, nil
 }
 
