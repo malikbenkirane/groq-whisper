@@ -22,7 +22,7 @@ func Get(url string) (string, error) {
 		}()
 		scan := bufio.NewScanner(resp.Body)
 		for scan.Scan() {
-			after, found := strings.CutPrefix(scan.Text(), "const version = \"")
+			after, found := strings.CutPrefix(scan.Text(), "const Version = \"")
 			if !found {
 				continue
 			}
