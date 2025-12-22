@@ -9,4 +9,4 @@ echo pushing $VERSION
 	./groq-whisper.exe dev zip && \
 	gcloud storage cp groq-setup-$VERSION.zip gs://groq-whisper && \
 	gcloud storage cp setup/groq-setup-$VERSION.exe gs://groq-whisper && \
-	gcloud storage cp groq-setup-$VERSION.exe gs://groq-whisper
+	gcloud storage cp groq-$VERSION.exe gs://groq-whisper
