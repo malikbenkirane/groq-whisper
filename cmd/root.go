@@ -5,7 +5,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func NewCLI(version string) *cobra.Command {
+func NewCLI() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "groq",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -15,9 +15,9 @@ func NewCLI(version string) *cobra.Command {
 	cmd.AddCommand(
 		newCommandRecord(),
 		newCommandSidecar(),
-		newCommandVersion(version),
-		newCommandUpgrade(version),
-		newCommandDev(version),
+		newCommandVersion(),
+		newCommandUpgrade(),
+		newCommandDev(),
 	)
 	return cmd
 }

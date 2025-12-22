@@ -3,14 +3,15 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/malikbenkirane/groq-whisper/setup/pkg/version"
 	"github.com/spf13/cobra"
 )
 
-func newCommandVersion(version string) *cobra.Command {
+func newCommandVersion() *cobra.Command {
 	return &cobra.Command{
 		Use: "version",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Println(version)
+			fmt.Println(version.Version)
 			return nil
 		},
 	}
