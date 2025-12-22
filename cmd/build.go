@@ -92,7 +92,9 @@ PATH environment variable (e.g. export PATH=$PATH:$HOME/google-cloud-sdk/bin).
 			if !*push {
 				return nil
 			}
-			opts := []gcloud.BucketOption{}
+			opts := []gcloud.BucketOption{
+				gcloud.OptionBucketProject(*gcpProject),
+			}
 			if *gcloudLogin {
 				opts = append(opts, gcloud.BucketWithLogin())
 			}
