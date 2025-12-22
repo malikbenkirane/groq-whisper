@@ -8,10 +8,6 @@ import (
 	"github.com/malikbenkirane/groq-whisper/setup/pkg/version"
 )
 
-func bucketFile(remote, version string) string {
-	return fmt.Sprintf("%s/groq-%s.exe", remote, version)
-}
-
 func newCommandUpgrade() *cobra.Command {
 	var bucket *string
 	cmd := &cobra.Command{
