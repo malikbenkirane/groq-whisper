@@ -35,7 +35,7 @@ func newCommandInstall() *cobra.Command {
 	cfg := version.DefaultUpgraderConfig()
 
 	bucket = cmd.Flags().String("bucket", "groq-whisper", "gcloud bucket name")
-	path = cmd.Flags().String("path", "groq", "installation path")
+	path = cmd.Flags().String("path", "", "installation path (default cwd)")
 	appName = cmd.Flags().String("app-name", cfg.App, "groq whisper app name")
 	installerName = cmd.Flags().String("intaller-name", cfg.Installer, "groq whisper installer app name")
 	versionSource = cmd.Flags().String("version-source", cfg.VersionSrc, "version source url")

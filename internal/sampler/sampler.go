@@ -14,8 +14,9 @@ import (
 	"go.uber.org/zap"
 )
 
-func New(log *zap.Logger, sampleRate float64, splitPeriod time.Duration) Sampler {
+func New(log *zap.Logger, sampleRate float64, splitPeriod time.Duration, encoderOpts ...EncoderOption) Sampler {
 	s := &sampler{
+		e:         NewEncoder(encoderOpts...),
 		log:       log,
 		sample:    sampleRate,
 		splitFreq: splitPeriod,
@@ -30,6 +31,7 @@ type Sampler interface {
 }
 
 type sampler struct {
+	e         Encoder
 	log       *zap.Logger
 	sample    float64
 	splitFreq time.Duration
@@ -79,7 +81,7 @@ func (s sampler) consume(ctx context.Context) (err error) {
 			if err = f.Close(); err != nil {
 				return fmt.Errorf("close chunk %q: %w", pr, err)
 			}
-			err = convert(c.ts, strconv.Itoa(int(s.sample)))
+			err = convert(s.e, c.ts, strconv.Itoa(int(s.sample)))
 			if err != nil {
 				return fmt.Errorf("convert: %w", err)
 			}
@@ -178,7 +180,7 @@ type chunk struct {
 	ts  time.Time
 }
 
-func convert(ts time.Time, freq string) (err error) {
+func convert(e Encoder, ts time.Time, freq string) (err error) {
 	raw, mp3 := outPath(ts, outRaw), outPath(ts, outMp3)
 	args := []string{
 		"-f", "s16le",
@@ -186,7 +188,7 @@ func convert(ts time.Time, freq string) (err error) {
 		"-ac", "1",
 		"-i", raw, mp3,
 	}
-	if err = ffmpeg(mp3, args...); err != nil {
+	if err = e.encode(mp3, args...); err != nil {
 		return fmt.Errorf("ffmpeg %q->%q: %w", raw, mp3, err)
 	}
 	flac := outPath(ts, outFlac)
@@ -198,13 +200,35 @@ func convert(ts time.Time, freq string) (err error) {
 		"-c:a", "flac",
 		flac,
 	}
-	if err = ffmpeg(flac, args...); err != nil {
+	if err = e.encode(flac, args...); err != nil {
 		return fmt.Errorf("ffmpeg %q->%q: %w", mp3, flac, err)
 	}
 	return nil
 }
 
-func ffmpeg(rm string, args ...string) (err error) {
+type Encoder struct {
+	path string
+}
+
+type EncoderOption func(Encoder) Encoder
+
+// EncoderOptionPath specifies ffmpeg path
+func EncoderOptionPath(path string) EncoderOption {
+	return func(e Encoder) Encoder {
+		e.path = path
+		return e
+	}
+}
+
+func NewEncoder(opts ...EncoderOption) Encoder {
+	encoder := Encoder{path: "ffmpeg"}
+	for _, opt := range opts {
+		encoder = opt(encoder)
+	}
+	return encoder
+}
+
+func (e Encoder) encode(rm string, args ...string) (err error) {
 	_, err = os.Stat(rm)
 	if err == nil {
 		if err = os.Remove(rm); err != nil {
