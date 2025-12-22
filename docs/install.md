@@ -11,7 +11,10 @@ You should be able to download [groq-setup-v0.7.0.zip](
 https://storage.googleapis.com/groq-whisper/groq-setup-v0.7.3.zip
 ) to take care of all the steps mentioned below.
 
-1. extract the archive to `C:\Windows\System32`
+1. extract the archive to 
+   ```
+   C:\Windows\System32
+   ```
 
 2. Open `cmd` as an administrator.
    ```bash
