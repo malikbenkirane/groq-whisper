@@ -56,7 +56,7 @@ func newCommandZip() *cobra.Command {
 					return fmt.Errorf("open %q: %w", exe, err)
 				}
 				defer func() {
-					err = dcheck.Wrap(z.Close(), err, "close %q", dst)
+					err = dcheck.Wrap(f.Close(), err, "close %q", dst)
 				}()
 				if _, err = io.Copy(w, f); err != nil {
 					return fmt.Errorf("copy to zip %q: %w", dst, err)
