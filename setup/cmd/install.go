@@ -13,10 +13,12 @@ func newCommandInstall() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "install",
 		Aliases: []string{"i"},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			err := os.MkdirAll(*path, 0700)
-			if err != nil {
-				return fmt.Errorf("mkdir %q: %w", *path, err)
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			if len(*path) > 0 {
+				err = os.MkdirAll(*path, 0700)
+				if err != nil {
+					return fmt.Errorf("mkdir %q: %w", *path, err)
+				}
 			}
 			if err = os.Chdir(*path); err != nil {
 				return fmt.Errorf("chdir %q: %w", *path, err)
