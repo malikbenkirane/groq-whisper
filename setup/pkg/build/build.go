@@ -12,7 +12,10 @@ func Build(path, output string) error {
 	if err != nil {
 		gopath = path_util.Join("mingw64", "lib", "go", "bin", "go")
 	}
-	cmd := exec.Command(gopath, "build", "-o", output, path)
+	if err := os.Chdir(path); err != nil {
+		return fmt.Errorf("chdir %q: %w", path, err)
+	}
+	cmd := exec.Command(gopath, "build", "-o", output)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
