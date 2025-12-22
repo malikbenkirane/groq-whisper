@@ -149,7 +149,7 @@ func (u upgrade) handle() (err error) {
 		dst := u.upgrade.Name
 		f, err := os.Create(dst)
 		if err != nil {
-			return fmt.Errorf("create %q: %w", dst, err)
+			return fmt.Errorf("create dst %q: %w", dst, err)
 		}
 		defer func() {
 			err = dcheck.Wrap(f.Close(), err, "close %q", dst)
@@ -173,7 +173,7 @@ func (u upgrade) handle() (err error) {
 	{
 		f, err := os.Create(exe)
 		if err != nil {
-			return fmt.Errorf("create %q: %w", exe, err)
+			return fmt.Errorf("create exe %q: %w", exe, err)
 		}
 		defer func() {
 			err = dcheck.Wrap(f.Close(), err, "close %q", exe)
