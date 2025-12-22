@@ -84,12 +84,17 @@ func (i installer) download() (err error) {
 			if err != nil {
 				return fmt.Errorf("7z new reader: %w", err)
 			}
-			bar := progressbar.Default(int64(len(reader.File)), "installing ffmpeg")
+			bar := progressbar.NewOptions(len(reader.File),
+				progressbar.OptionShowDescriptionAtLineEnd(),
+				progressbar.OptionClearOnFinish(),
+				progressbar.OptionSetDescription("install ffmpeg"),
+				progressbar.OptionSetMaxDetailRow(8))
 			for _, f := range reader.File {
-				if err := i.extract(f); err != nil {
+				dst, err := i.extract(f)
+				if err != nil {
 					return fmt.Errorf("extract: %w", err)
 				}
-				if err := bar.Add(1); err != nil {
+				if err := bar.AddDetail(dst); err != nil {
 					return fmt.Errorf("bar add: %w", err)
 				}
 			}
@@ -98,44 +103,44 @@ func (i installer) download() (err error) {
 	return nil
 }
 
-func (i installer) extract(fz *sevenzip.File) (err error) {
+func (i installer) extract(fz *sevenzip.File) (dst string, err error) {
 	rc, err := fz.Open()
 	if err != nil {
-		return fmt.Errorf("7z open %q: %w", fz.Name, err)
+		return "", fmt.Errorf("7z open %q: %w", fz.Name, err)
 	}
 	defer func() {
 		err = dcheck.Wrap(rc.Close(), err, "close %q", fz.Name)
 	}()
 	parts := strings.Split(fz.Name, "/")
 	parts[0] = i.path
-	dst := path.Join(parts...)
+	dst = path.Join(parts...)
 	_, err = os.Stat(dst)
 	if !errors.Is(err, os.ErrNotExist) {
 		if !i.conf.overwrite {
-			return nil
+			return dst, nil
 		}
-		if err != nil {
-			return fmt.Errorf("stat %q: %w", dst, err)
-		}
+	}
+	if err != nil {
+		return "", fmt.Errorf("stat %q: %w", dst, err)
 	}
 	if parts[len(parts)-1] == "" {
 		if err := os.MkdirAll(dst, 0700); err != nil {
-			return fmt.Errorf("mkdir %q: %w", dst, err)
+			return "", fmt.Errorf("mkdir %q: %w", dst, err)
 		}
-		return nil
+		return dst, nil
 	}
 	f, err := os.Create(dst)
 	if err != nil {
-		return fmt.Errorf("create %q: %w", dst, err)
+		return "", fmt.Errorf("create %q: %w", dst, err)
 	}
 	defer func() {
 		err = dcheck.Wrap(f.Close(), err, "close %q", dst)
 	}()
 	_, err = io.Copy(f, rc)
 	if err != nil {
-		return fmt.Errorf("install to %q: %w", dst, err)
+		return "", fmt.Errorf("install to %q: %w", dst, err)
 	}
-	return nil
+	return dst, nil
 }
 
 func DefaultPortAudioDst() (*PortAudioDst, error) {
