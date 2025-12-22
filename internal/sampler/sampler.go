@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
 	"strconv"
 	"time"
 
@@ -66,7 +67,7 @@ func (s sampler) consume(ctx context.Context) (err error) {
 		case <-ctx.Done():
 			return
 		case c := <-s.chunk:
-			pr := outPath(c.ts, outRaw)
+			pr := s.e.outPath(c.ts, outRaw)
 			s.log.Info("writing new chunk", zap.String("path", pr))
 			f, err := os.Create(pr)
 			if err != nil {
@@ -171,8 +172,9 @@ func (t outType) String() string {
 	return "raw"
 }
 
-func outPath(ts time.Time, t outType) string {
-	return fmt.Sprintf("%s.%s", ts.Format("20060102150405"), t)
+func (e Encoder) outPath(ts time.Time, t outType) string {
+	filename := fmt.Sprintf("%s.%s", ts.Format("20060102150405"), t)
+	return path.Join(e.root, filename)
 }
 
 type chunk struct {
@@ -181,7 +183,7 @@ type chunk struct {
 }
 
 func convert(e Encoder, ts time.Time, freq string) (err error) {
-	raw, mp3 := outPath(ts, outRaw), outPath(ts, outMp3)
+	raw, mp3 := e.outPath(ts, outRaw), e.outPath(ts, outMp3)
 	args := []string{
 		"-f", "s16le",
 		"-ar", freq,
@@ -191,7 +193,7 @@ func convert(e Encoder, ts time.Time, freq string) (err error) {
 	if err = e.encode(mp3, args...); err != nil {
 		return fmt.Errorf("ffmpeg %q->%q: %w", raw, mp3, err)
 	}
-	flac := outPath(ts, outFlac)
+	flac := e.outPath(ts, outFlac)
 	args = []string{
 		"-i", mp3,
 		"-ar", freq,
@@ -207,7 +209,8 @@ func convert(e Encoder, ts time.Time, freq string) (err error) {
 }
 
 type Encoder struct {
-	path string
+	ffmpegPath string
+	root       string
 }
 
 type EncoderOption func(Encoder) Encoder
@@ -215,13 +218,21 @@ type EncoderOption func(Encoder) Encoder
 // EncoderOptionPath specifies ffmpeg path
 func EncoderOptionPath(path string) EncoderOption {
 	return func(e Encoder) Encoder {
-		e.path = path
+		e.ffmpegPath = path
+		return e
+	}
+}
+
+// EncoderOptionRoot specifies were to the encoded samples
+func EncoderOptionRoot(root string) EncoderOption {
+	return func(e Encoder) Encoder {
+		e.root = root
 		return e
 	}
 }
 
 func NewEncoder(opts ...EncoderOption) Encoder {
-	encoder := Encoder{path: "ffmpeg"}
+	encoder := Encoder{ffmpegPath: "ffmpeg"}
 	for _, opt := range opts {
 		encoder = opt(encoder)
 	}

@@ -1,25 +1,33 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
 
-func NewCLI() *cobra.Command {
+func NewCLI() (*cobra.Command, error) {
 	cmd := &cobra.Command{
 		Use: "groq",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return cmd.Help()
 		},
 	}
+
+	record, err := newCommandRecord()
+	if err != nil {
+		return nil, fmt.Errorf("new command record: %w", err)
+	}
+
 	cmd.AddCommand(
-		newCommandRecord(),
 		newCommandSidecar(),
 		newCommandVersion(),
 		newCommandUpgrade(),
 		newCommandDev(),
-	)
-	return cmd
+		record)
+
+	return cmd, nil
 }
 
 func newLogger(debug bool) *zap.Logger {
