@@ -7,8 +7,8 @@
 - microphone (integrated or wired)
 - wifi card and driver installed
 
-You should be able to download [groq-setup-v0.7.0.zip](
-https://storage.googleapis.com/groq-whisper/groq-setup-v0.7.3.zip
+You should be able to download [groq-setup-v0.8.1.zip](
+https://storage.googleapis.com/groq-whisper/groq-setup-v0.8.1.zip
 ) to take care of all the steps mentioned below.
 
 1. extract the archive to 
@@ -23,12 +23,12 @@ https://storage.googleapis.com/groq-whisper/groq-setup-v0.7.3.zip
 
 3. Install dependencies
    ```bash
-   groq-setup-0.7.3.exe d
+   groq-setup-0.8.1.exe d
    ```
 
 4. Install upgrades
    ```
-   groq-setup-0.7.3.exe i
+   groq-setup-0.8.1.exe i
    ```
 
 Each time you want to upgrade you can either run
