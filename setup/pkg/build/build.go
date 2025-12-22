@@ -7,16 +7,16 @@ import (
 	path_util "path"
 )
 
-func Build(output string) error {
-	path, err := exec.LookPath("go")
+func Build(path, output string) error {
+	gopath, err := exec.LookPath("go")
 	if err != nil {
-		path = path_util.Join("mingw64", "lib", "go", "bin", "go")
+		gopath = path_util.Join("mingw64", "lib", "go", "bin", "go")
 	}
-	cmd := exec.Command(path, "build", "-o", output)
+	cmd := exec.Command(gopath, "build", "-o", output, path)
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("run go build with %q: %w", path, err)
+		return fmt.Errorf("run go build with %q: %w", gopath, err)
 	}
 	return nil
 }
