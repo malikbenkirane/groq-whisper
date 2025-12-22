@@ -26,7 +26,7 @@ func DefaultPortAudioDst() (*PortAudioDst, error) {
 	if len(parts) != 2 {
 		return nil, fmt.Errorf("unable to extract volume from %q", home)
 	}
-	volume := parts[0]
+	volume := parts[0] + ":"
 	return &PortAudioDst{
 		path: path.Join(volume, "Windows", "System32", "libportaudio.dll"),
 	}, nil

@@ -60,10 +60,11 @@ type installer struct {
 }
 
 func (i installer) Install() error {
-	// curently there is no clear separation of concerns and the name
-	// "download" is not appropriate as we overwrite portaudio.dll here
-	if err := i.download(); err != nil {
-		return fmt.Errorf("download: %w", err)
+	if err := i.installFfmpeg(); err != nil {
+		return fmt.Errorf("install ffmpeg: %w", err)
+	}
+	if err := i.installPortaudio(); err != nil {
+		return fmt.Errorf("install portaudio: %w", err)
 	}
 	return nil
 }
