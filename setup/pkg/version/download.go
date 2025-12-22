@@ -118,12 +118,21 @@ func (u *upgrader) download(app, installer io.Writer) (appUpgrade, installerUpgr
 }
 
 func (u upgrader) downloadObject(w io.Writer, object string) (*Upgrade, error) {
-	if u.version == Version {
+	_, err := os.Stat(Executable(object, Version))
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return nil, fmt.Errorf("stat object %q %q: %w", object, Version, err)
+	}
+	if err == nil && u.version == Version {
 		return &Upgrade{
 			Name:     Executable(object, Version),
 			Upgraded: false,
 		}, nil
 	}
+	if err == nil {
+		return nil, fmt.Errorf("incorrect naming for object %q remote=%q local=%q",
+			object, u.version, Version)
+	}
+	// error is not exist
 	exe := Executable(object, u.version)
 	if err := u.b.Pull(w, exe); err != nil {
 		return nil, fmt.Errorf("bucket pull: %w", err)
@@ -141,7 +150,7 @@ type upgrade struct {
 }
 
 func (u upgrade) handle() (err error) {
-	if u.upgrade.Upgraded {
+	if !u.upgrade.Upgraded {
 		return nil
 	}
 	var cpy bytes.Buffer
