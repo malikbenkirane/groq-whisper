@@ -28,10 +28,6 @@ func newCommandInstall() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("new upgrader: %w", err)
 			}
-			if u.Version() == version.Version {
-				fmt.Println("Already up to date")
-				return nil
-			}
 			return u.Upgrade()
 		},
 	}
