@@ -14,6 +14,7 @@ func Build(path, output string) error {
 	}
 	cmd := exec.Command(gopath, "build", "-o", output, path)
 	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("run go build with %q: %w", gopath, err)
