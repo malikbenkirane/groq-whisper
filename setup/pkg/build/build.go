@@ -7,7 +7,7 @@ import (
 	path_util "path"
 )
 
-func build(output string) error {
+func Build(output string) error {
 	path, err := exec.LookPath("go")
 	if err != nil {
 		path = path_util.Join("mingw64", "lib", "go", "bin", "go")
