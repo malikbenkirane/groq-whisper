@@ -78,21 +78,21 @@ func (i installer) extract(fz *sevenzip.File) (dst string, err error) {
 	}()
 	parts := strings.Split(fz.Name, "/")
 	parts[0] = i.path
-	dst = path.Join(parts...)
-	_, err = os.Stat(dst)
-	if !errors.Is(err, os.ErrNotExist) {
-		if !i.conf.overwrite {
-			return dst, nil
-		}
-	}
-	if err != nil {
-		return "", fmt.Errorf("stat %q: %w", dst, err)
-	}
 	if parts[len(parts)-1] == "" {
 		if err := os.MkdirAll(dst, 0700); err != nil {
 			return "", fmt.Errorf("mkdir %q: %w", dst, err)
 		}
 		return dst, nil
+	}
+	dst = path.Join(parts...)
+	_, err = os.Stat(dst)
+	if err == nil {
+		if !i.conf.overwrite {
+			return dst, nil
+		}
+	}
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return "", fmt.Errorf("stat %q: %w", dst, err)
 	}
 	f, err := os.Create(dst)
 	if err != nil {
