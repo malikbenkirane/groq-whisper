@@ -44,7 +44,7 @@ type adapter struct {
 }
 
 func (a adapter) Themes() (map[string]theme.Description, error) {
-	rows, err := a.db.Query(`SELECT (name, title, category, keyword) FROM themes`)
+	rows, err := a.db.Query(`SELECT name, title, category, keyword FROM themes`)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", errSelectThemes, err)
 	}
@@ -54,7 +54,7 @@ func (a adapter) Themes() (map[string]theme.Description, error) {
 	for rows.Next() {
 		var row struct {
 			name     string
-			title    string
+			title    sql.NullString
 			category string
 			keyword  string
 		}
@@ -64,8 +64,10 @@ func (a adapter) Themes() (map[string]theme.Description, error) {
 		if _, ok := themes[row.name]; !ok {
 			categories[row.name] = []*theme.Category{}
 			themes[row.name] = &theme.Description{
-				Name:  row.name,
-				Title: row.title,
+				Name: row.name,
+			}
+			if row.title.Valid {
+				themes[row.name].Title = row.title.String
 			}
 		}
 		if _, ok := categories[row.category]; !ok {
