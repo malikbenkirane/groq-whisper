@@ -3,9 +3,11 @@ package https
 import (
 	"log/slog"
 	"net/http"
+
+	"github.com/malikbenkirane/groq-whisper/host/internal/repo"
 )
 
-func New(opts ...Option) (Adapter, error) {
+func New(r repo.Theatre, opts ...Option) (Adapter, error) {
 	conf := DefaultConfig()
 	for _, opt := range opts {
 		conf = opt(conf)
@@ -14,6 +16,7 @@ func New(opts ...Option) (Adapter, error) {
 	a := &adapter{
 		config: conf,
 		mux:    mux,
+		repo:   r,
 	}
 	mux.Handle("GET /themes", wrap(a.handleGetThemes()))
 	return a, nil
@@ -61,6 +64,8 @@ func OptionKeyFile(path string) Option {
 type adapter struct {
 	config Config
 	mux    *http.ServeMux
+
+	repo repo.Theatre
 }
 
 func (a adapter) Serve() error {

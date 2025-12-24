@@ -20,7 +20,7 @@ func NewCLI() (*cobra.Command, error) {
 	}
 	cmd.AddCommand(
 		newCommandMkcert(),
-		newCommandServe(),
+		newCommandServe(a),
 		theme.NewCommand(a),
 		actor.NewCommand(a))
 	return cmd, nil
