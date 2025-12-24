@@ -10,12 +10,15 @@ func _() {
 	var x [1]struct{}
 	_ = x[errZero-0]
 	_ = x[errOpenDB-1]
-	_ = x[errUnknown-2]
+	_ = x[errSelectThemes-2]
+	_ = x[errSelectThemesIter-3]
+	_ = x[errSelectThemesScan-4]
+	_ = x[errUnknown-5]
 }
 
-const _errAdapter_name = "errZeroerrOpenDBerrUnknown"
+const _errAdapter_name = "errZeroerrOpenDBerrSelectThemeserrSelectThemesItererrSelectThemesScanerrUnknown"
 
-var _errAdapter_index = [...]uint8{0, 7, 16, 26}
+var _errAdapter_index = [...]uint8{0, 7, 16, 31, 50, 69, 79}
 
 func (i errAdapter) String() string {
 	idx := int(i) - 0
