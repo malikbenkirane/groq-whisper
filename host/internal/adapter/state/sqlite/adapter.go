@@ -48,9 +48,8 @@ func (a adapter) Themes() (map[string]theme.Description, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", errSelectThemes, err)
 	}
-	themes := make(map[string]*theme.Description)    // index themes
-	categories := make(map[string][]*theme.Category) // index theme categories
-	keywords := make(map[string][]theme.Keyword)     // index category keywords
+	themes := make(map[string]*theme.Description)           // index themes
+	keywords := make(map[string]map[string][]theme.Keyword) // index category keywords
 	for rows.Next() {
 		var row struct {
 			name     string
@@ -62,27 +61,28 @@ func (a adapter) Themes() (map[string]theme.Description, error) {
 			return nil, fmt.Errorf("%w: %w", errSelectThemesScan, err)
 		}
 		if _, ok := themes[row.name]; !ok {
-			categories[row.name] = []*theme.Category{}
 			themes[row.name] = &theme.Description{
 				Name: row.name,
 			}
 			if row.title.Valid {
 				themes[row.name].Title = row.title.String
 			}
+			keywords[row.name] = make(map[string][]theme.Keyword)
 		}
-		if _, ok := categories[row.category]; !ok {
-			keywords[row.category] = []theme.Keyword{}
+		if _, ok := keywords[row.name][row.category]; !ok {
+			keywords[row.name][row.category] = make([]theme.Keyword, 0)
 		}
-		categories[row.name] = append(categories[row.name], &theme.Category{Name: row.category})
-		keywords[row.category] = append(keywords[row.category], theme.Keyword(row.keyword))
+		keywords[row.name][row.category] = append(keywords[row.name][row.category],
+			theme.Keyword(row.keyword))
 	}
-	for name, categories := range categories {
-		final := make([]theme.Category, 0, len(categories))
-		for _, category := range categories {
-			category.Keywords = keywords[category.Name]
-			final = append(final, *category)
+	for name, categories := range keywords {
+		for category, keywords := range categories {
+			cat := theme.Category{
+				Name:     category,
+				Keywords: keywords,
+			}
+			themes[name].Categories = append(themes[name].Categories, cat)
 		}
-		themes[name].Categories = final
 	}
 	if rows.Err() != nil {
 		return nil, fmt.Errorf("%w: %w", errSelectThemesIter, err)
