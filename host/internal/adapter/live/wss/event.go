@@ -7,7 +7,6 @@ import (
 
 	"github.com/coder/websocket"
 	"github.com/google/uuid"
-	"github.com/kataras/tunnel"
 )
 
 type socket struct {
