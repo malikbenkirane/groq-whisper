@@ -7,6 +7,7 @@ func NewCLI() *cobra.Command {
 		Use: "groq-host",
 	}
 	cmd.AddCommand(
-		newCommandMkcert())
+		newCommandMkcert(),
+		newCommandServe())
 	return cmd
 }
