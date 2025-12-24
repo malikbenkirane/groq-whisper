@@ -13,5 +13,8 @@ const (
 	errSelectThemes
 	errSelectThemesIter
 	errSelectThemesScan
+	errSelectActors
+	errSelectActorsIter
+	errSelectActorsScan
 	errUnknown
 )

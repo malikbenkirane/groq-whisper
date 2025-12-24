@@ -13,12 +13,15 @@ func _() {
 	_ = x[errSelectThemes-2]
 	_ = x[errSelectThemesIter-3]
 	_ = x[errSelectThemesScan-4]
-	_ = x[errUnknown-5]
+	_ = x[errSelectActors-5]
+	_ = x[errSelectActorsIter-6]
+	_ = x[errSelectActorsScan-7]
+	_ = x[errUnknown-8]
 }
 
-const _errAdapter_name = "errZeroerrOpenDBerrSelectThemeserrSelectThemesItererrSelectThemesScanerrUnknown"
+const _errAdapter_name = "errZeroerrOpenDBerrSelectThemeserrSelectThemesItererrSelectThemesScanerrSelectActorserrSelectActorsItererrSelectActorsScanerrUnknown"
 
-var _errAdapter_index = [...]uint8{0, 7, 16, 31, 50, 69, 79}
+var _errAdapter_index = [...]uint8{0, 7, 16, 31, 50, 69, 84, 103, 122, 132}
 
 func (i errAdapter) String() string {
 	idx := int(i) - 0
