@@ -1,4 +1,4 @@
-package theme
+package actor
 
 import (
 	"github.com/malikbenkirane/groq-whisper/host/internal/repo"
@@ -7,11 +7,9 @@ import (
 
 func NewCommand(r repo.Theatre) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "theme",
+		Use: "actor",
 	}
-
 	cmd.AddCommand(
 		newCommandList(r))
-
 	return cmd
 }

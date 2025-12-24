@@ -3,7 +3,9 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/malikbenkirane/groq-whisper/host/cmd/actor"
 	"github.com/malikbenkirane/groq-whisper/host/cmd/theme"
+	"github.com/malikbenkirane/groq-whisper/host/internal/adapter/state/sqlite"
 	"github.com/spf13/cobra"
 )
 
@@ -12,14 +14,14 @@ func NewCLI() (*cobra.Command, error) {
 		Use: "groq-host",
 	}
 
-	cmdTheme, err := theme.NewCommand()
+	a, err := sqlite.New()
 	if err != nil {
-		return nil, fmt.Errorf("init theme command: %w", err)
+		return nil, fmt.Errorf("sqlite new: %w", err)
 	}
-
 	cmd.AddCommand(
 		newCommandMkcert(),
 		newCommandServe(),
-		cmdTheme)
+		theme.NewCommand(a),
+		actor.NewCommand(a))
 	return cmd, nil
 }

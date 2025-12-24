@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/malikbenkirane/groq-whisper/host/internal/domain/actor"
 	"github.com/malikbenkirane/groq-whisper/host/internal/domain/theme"
 	"github.com/malikbenkirane/groq-whisper/host/internal/repo"
 
@@ -41,6 +42,27 @@ func defaultConfig() Config {
 type adapter struct {
 	db   *sql.DB
 	conf Config
+}
+
+func (a adapter) Actors() (map[string]actor.Call, error) {
+	rows, err := a.db.Query(`SELECT name, site FROM actors`)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", errSelectActors, err)
+	}
+	actors := make(map[string]actor.Call)
+	for rows.Next() {
+		var row struct {
+			name, site string
+		}
+		if err := rows.Scan(&row.name, &row.site); err != nil {
+			return nil, fmt.Errorf("%w: %w", errSelectActorsScan, err)
+		}
+		actors[row.name] = actor.Call(row.site)
+	}
+	if rows.Err() != nil {
+		return nil, fmt.Errorf("%w: %w", errSelectActorsIter, err)
+	}
+	return actors, nil
 }
 
 func (a adapter) Themes() (map[string]theme.Description, error) {
