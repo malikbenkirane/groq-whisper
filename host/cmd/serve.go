@@ -10,10 +10,11 @@ import (
 
 	"github.com/malikbenkirane/groq-whisper/host/internal/adapter/live/wss"
 	"github.com/malikbenkirane/groq-whisper/host/internal/adapter/rest/https"
+	"github.com/malikbenkirane/groq-whisper/host/internal/repo"
 	"github.com/spf13/cobra"
 )
 
-func newCommandServe() *cobra.Command {
+func newCommandServe(r repo.Theatre) *cobra.Command {
 	return &cobra.Command{
 		Use: "serve",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -30,7 +31,7 @@ func newCommandServe() *cobra.Command {
 				}
 			}()
 
-			s, err := https.New()
+			s, err := https.New(r)
 			if err != nil {
 				return fmt.Errorf("new https server: %w", err)
 			}
