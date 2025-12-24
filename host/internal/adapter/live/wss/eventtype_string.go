@@ -12,13 +12,13 @@ func _() {
 	_ = x[eventJoin-1]
 	_ = x[eventKeyBroadcast-2]
 	_ = x[eventThemeLock-3]
-	_ = x[eventThemeUnlock-4]
+	_ = x[eventActorLock-4]
 	_ = x[eventUnknown-5]
 }
 
-const _eventType_name = "eventErroreventJoineventKeyBroadcasteventThemeLockeventThemeUnlockeventUnknown"
+const _eventType_name = "eventErroreventJoineventKeyBroadcasteventThemeLockeventActorLockeventUnknown"
 
-var _eventType_index = [...]uint8{0, 10, 19, 36, 50, 66, 78}
+var _eventType_index = [...]uint8{0, 10, 19, 36, 50, 64, 76}
 
 func (i eventType) String() string {
 	idx := int(i) - 0
