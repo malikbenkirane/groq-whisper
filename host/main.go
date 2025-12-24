@@ -14,5 +14,10 @@ func main() {
 	})
 	logger := slog.New(h)
 	slog.SetDefault(logger)
-	cobra.CheckErr(cmd.NewCLI().Execute())
+	cmd, err := cmd.NewCLI()
+	if err != nil {
+		slog.Error("init cli", "err", err)
+		os.Exit(1)
+	}
+	cobra.CheckErr(cmd.Execute())
 }
