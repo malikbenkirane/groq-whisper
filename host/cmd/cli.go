@@ -1,13 +1,25 @@
 package cmd
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
 
-func NewCLI() *cobra.Command {
+	"github.com/malikbenkirane/groq-whisper/host/cmd/theme"
+	"github.com/spf13/cobra"
+)
+
+func NewCLI() (*cobra.Command, error) {
 	cmd := &cobra.Command{
 		Use: "groq-host",
 	}
+
+	cmdTheme, err := theme.NewCommand()
+	if err != nil {
+		return nil, fmt.Errorf("init theme command: %w", err)
+	}
+
 	cmd.AddCommand(
 		newCommandMkcert(),
-		newCommandServe())
-	return cmd
+		newCommandServe(),
+		cmdTheme)
+	return cmd, nil
 }
