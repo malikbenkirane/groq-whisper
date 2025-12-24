@@ -50,7 +50,7 @@ func fromTheme(t theme.Description) themeJson {
 	}
 	categories := make([]categoryJson, len(t.Categories))
 	for i, c := range t.Categories {
-		keywords := make([]string, 0, len(c.Keywords))
+		keywords := make([]string, len(c.Keywords))
 		for i, k := range c.Keywords {
 			keywords[i] = string(k)
 		}
