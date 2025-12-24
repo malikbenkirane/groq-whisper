@@ -3,13 +3,8 @@ CREATE TABLE themes (
 		name TEXT,
 		title TEXT,
 		category TEXT,
-		keyword TEXT,
+		keyword TEXT
 
-);
--- Create themes_categories table
-CREATE TABLE themes_categories (
-		name TEXT,
-		theme TEXT,
 );
 -- Create actors table
 CREATE TABLE actors (
@@ -32,13 +27,13 @@ CREATE TABLE sessions_actors (
 -- Create themes_locks table
 CREATE TABLE themes_locks (
 		id INTEGER PRIMARY KEY,
-		islocked INTEGER,
+		islocked BOOLEAN,
 		theme INTEGER
 );
 -- Create actors_locks table
 CREATE TABLE actors_locks (
 		id INTEGER PRIMARY KEY,
-		islocked INTEGER,
+		islocked BOOLEAN,
 		session INTEGER,
 		actor TEXT
 );
