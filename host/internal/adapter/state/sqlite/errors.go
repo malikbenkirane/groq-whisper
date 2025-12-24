@@ -10,5 +10,8 @@ func (err errAdapter) Error() string {
 const (
 	errZero errAdapter = iota
 	errOpenDB
+	errSelectThemes
+	errSelectThemesIter
+	errSelectThemesScan
 	errUnknown
 )
