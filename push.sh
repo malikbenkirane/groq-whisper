@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+export PATH=/mingw64/bin:$PATH
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/mingw64/lib/pkgconfig
+export PATH=/mingw64/lib/go/bin:$PATH
+export PATH=$PATH:~/google-cloud-sdk/bin
+
 # workaround for ./groq-whisper.exe dev build --push
 git pull
 go build
