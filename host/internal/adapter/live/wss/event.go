@@ -119,8 +119,8 @@ func (a adapter) handle(p []byte, t websocket.MessageType, socket *socket) error
 					IsHost: true,
 					Event:  pevent(eventActorLock),
 					ActorLock: &msgActorLock{
-						Name: msg.Body.tunnel.ThemeLock.Name,
-						Lock: msg.Body.tunnel.ThemeLock.Lock,
+						Name: msg.Body.tunnel.ActorLock.Name,
+						Lock: msg.Body.tunnel.ActorLock.Lock,
 					},
 				},
 			},
