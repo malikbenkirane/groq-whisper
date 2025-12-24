@@ -4,15 +4,19 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
 	"path/filepath"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/cobra"
@@ -32,10 +36,32 @@ func groqKey(file string) (string, error) {
 }
 
 type groqClient struct {
-	key  string
-	log  *zap.Logger
-	tx   groqTx
-	lang string // iso-693-1
+	key   string
+	log   *zap.Logger
+	tx    groqTx
+	lang  string // iso-693-1
+	start time.Time
+	root  string
+}
+
+func (gc groqClient) file() (io.WriteCloser, error) {
+	p := gc.start.Format("2006-01-02_15-04-05.000.txt")
+	base := path.Join(gc.root, "whisper-v3-tx")
+	_, err := os.Stat(base)
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return nil, fmt.Errorf("stat %q: %w", base, err)
+	}
+	if err != nil { // error is os.ErrNotExist
+		if err := os.MkdirAll(base, 0700); err != nil {
+			return nil, fmt.Errorf("mkdir base %q: %w", base, err)
+		}
+	}
+	p = path.Join(base, p)
+	f, err := os.OpenFile(p, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
+	if err != nil {
+		return nil, fmt.Errorf("open file %q: %w", p, err)
+	}
+	return f, nil
 }
 
 type groqTx struct {
@@ -133,8 +159,9 @@ func (gc *groqClient) post(audio, model string) (err error) {
 	return nil
 }
 
-func newCommandSidecar() *cobra.Command {
+func newCommandSidecar() (*cobra.Command, error) {
 	var dry, debug *bool
+	var samplesDir *string
 	cmd := &cobra.Command{
 		Use:     "sidecar",
 		Aliases: []string{"watch", "w", "s"},
@@ -158,13 +185,25 @@ func newCommandSidecar() *cobra.Command {
 				}
 
 				gc = groqClient{
-					key:  key,
-					log:  log,
-					lang: "fr",
+					key:   key,
+					log:   log,
+					lang:  "fr",
+					start: time.Now(),
+					root:  *samplesDir,
 				}
 				log.Debug("new client",
 					zap.String("lang", gc.lang), zap.String("url", gtxUrl))
 			}
+
+			txOut, err := gc.file()
+			if err != nil {
+				return fmt.Errorf("tx out: %w", err)
+			}
+			defer func() {
+				if err := txOut.Close(); err != nil {
+					slog.Warn("unable to close txOut", "err", err)
+				}
+			}()
 
 			w, err := fsnotify.NewWatcher()
 			if err != nil {
@@ -206,10 +245,10 @@ func newCommandSidecar() *cobra.Command {
 									log.Error("gc post failed", zap.Error(err))
 									continue loop
 								}
-								e := json.NewEncoder(os.Stdout)
-								e.SetIndent("", "  ")
-								if err := e.Encode(gc.tx); err != nil {
-									log.Error("unable to encode gc response", zap.Error(err))
+								_, err := io.Copy(io.MultiWriter(os.Stdout, txOut), strings.NewReader(gc.tx.Text+"\n"))
+								if err != nil {
+									slog.Error("tx not written", "err", err)
+									continue loop
 								}
 							}
 						}
@@ -222,7 +261,7 @@ func newCommandSidecar() *cobra.Command {
 				}
 			}(ctx)
 
-			if err = w.Add("."); err != nil {
+			if err = w.Add(*samplesDir); err != nil {
 				cancel()
 				return fmt.Errorf("fsnotify add cwd: %w", err)
 			}
@@ -233,7 +272,16 @@ func newCommandSidecar() *cobra.Command {
 			return nil
 		},
 	}
+
+	defaultDir, err := os.UserHomeDir()
+	if err != nil {
+		return nil, fmt.Errorf("user home dir: %w", err)
+	}
+
+	defaultDir = path.Join(defaultDir, "groq-whisper-samples")
 	dry = cmd.Flags().Bool("dry", false, "don't post to groq")
 	debug = cmd.Flags().Bool("debug", false, "set log level at debug")
-	return cmd
+	samplesDir = cmd.Flags().String("samples-dir", defaultDir, "where recorded samples are processed")
+
+	return cmd, nil
 }

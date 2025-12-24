@@ -20,8 +20,13 @@ func NewCLI() (*cobra.Command, error) {
 		return nil, fmt.Errorf("new command record: %w", err)
 	}
 
+	sidecar, err := newCommandSidecar()
+	if err != nil {
+		return nil, fmt.Errorf("new command sidecar: %w", err)
+	}
+
 	cmd.AddCommand(
-		newCommandSidecar(),
+		sidecar,
 		newCommandVersion(),
 		newCommandUpgrade(),
 		newCommandDev(),
