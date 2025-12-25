@@ -23,6 +23,8 @@ func New(r repo.Theatre, opts ...Option) (Adapter, error) {
 	mux.Handle("GET /actors/{theme}", wrap(a.handleGetActorsTheme()))
 	mux.Handle("POST /session/{theme}", wrap(a.handlePostSession()))
 	mux.Handle("DELETE /session/{theme}", wrap(a.handleDeleteSession()))
+	mux.Handle("POST /lock/actor/{theme}/{actor}", wrap(a.handlePostLockActor()))
+	mux.Handle("DELETE /lock/actor/{theme}/{actor}", wrap(a.handleDeleteLockActor()))
 	return a, nil
 }
 
