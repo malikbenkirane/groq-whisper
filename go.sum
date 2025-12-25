@@ -92,8 +92,8 @@ github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515/go.mod h1:+0opPa2QZZtGFB
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
-github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251225093458-29db61243779 h1:hJ74zkdZVUZuybCE0YxzZN8ygVk0Vpwrkd73aIFNmmI=
-github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251225093458-29db61243779/go.mod h1:7TF6D1U+4jXlynqtMcBqgCkQpxxnKBBAUL1RV9vGcRA=
+github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251225111927-b357d5bc3f21 h1:0Q9V5q6OU95A+byIzDrLW/Lt3fjbhIfzMKB8hPnEEP8=
+github.com/malikbenkirane/groq-whisper/setup v0.0.0-20251225111927-b357d5bc3f21/go.mod h1:7TF6D1U+4jXlynqtMcBqgCkQpxxnKBBAUL1RV9vGcRA=
 github.com/mattn/go-runewidth v0.0.16 h1:E5ScNMtiwvlvB5paMFdw9p4kSQzbXFikJ5SQO6TULQc=
 github.com/mattn/go-runewidth v0.0.16/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
