@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/malikbenkirane/groq-whisper/host/cmd/actor"
+	"github.com/malikbenkirane/groq-whisper/host/cmd/session"
 	"github.com/malikbenkirane/groq-whisper/host/cmd/theme"
 	"github.com/malikbenkirane/groq-whisper/host/internal/adapter/state/sqlite"
 	"github.com/spf13/cobra"
@@ -22,6 +23,7 @@ func NewCLI() (*cobra.Command, error) {
 		newCommandMkcert(),
 		newCommandServe(a),
 		theme.NewCommand(a),
-		actor.NewCommand(a))
+		actor.NewCommand(a),
+		session.NewCommand(a))
 	return cmd, nil
 }
