@@ -188,7 +188,7 @@ UPDATE sessions SET stop8601 = ? WHERE theme = ? AND stop8601 IS NULL
 
 func (a adapter) CurrentSession(name theme.Name) (*session.Session, error) {
 	row := a.db.QueryRow(`
-SELECT id FROM sessions WHERE theme = ? AND stop8601 is NULL 
+SELECT id FROM sessions WHERE theme = ? AND stop8601 is NULL ORDER BY start8601 LIMIT 1
 	`, string(name))
 	var id int
 	err := row.Scan(&id)
