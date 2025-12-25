@@ -1,7 +1,7 @@
 package theme
 
 type Description struct {
-	Name       string
+	Name       Name
 	Title      string
 	Categories []Category
 }
@@ -12,3 +12,4 @@ type Category struct {
 }
 
 type Keyword string
+type Name string
