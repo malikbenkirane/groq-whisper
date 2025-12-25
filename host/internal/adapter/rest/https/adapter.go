@@ -19,6 +19,7 @@ func New(r repo.Theatre, opts ...Option) (Adapter, error) {
 		repo:   r,
 	}
 	mux.Handle("GET /themes", wrap(a.handleGetThemes()))
+	mux.Handle("GET /actors", wrap(a.handleGetActors()))
 	return a, nil
 }
 
