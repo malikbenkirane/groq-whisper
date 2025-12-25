@@ -12,16 +12,17 @@ func _() {
 	_ = x[ErrActors-1]
 	_ = x[ErrLockActor-2]
 	_ = x[ErrUnlockActor-3]
-	_ = x[ErrIsActorLocked-4]
-	_ = x[ErrResetActorLocks-5]
-	_ = x[ErrStartSession-6]
-	_ = x[ErrStopSession-7]
-	_ = x[ErrCurrentSession-8]
+	_ = x[ErrGetUnlockedActors-4]
+	_ = x[ErrIsActorLocked-5]
+	_ = x[ErrResetActorLocks-6]
+	_ = x[ErrStartSession-7]
+	_ = x[ErrStopSession-8]
+	_ = x[ErrCurrentSession-9]
 }
 
-const _Error_name = "ErrThemesErrActorsErrLockActorErrUnlockActorErrIsActorLockedErrResetActorLocksErrStartSessionErrStopSessionErrCurrentSession"
+const _Error_name = "ErrThemesErrActorsErrLockActorErrUnlockActorErrGetUnlockedActorsErrIsActorLockedErrResetActorLocksErrStartSessionErrStopSessionErrCurrentSession"
 
-var _Error_index = [...]uint8{0, 9, 18, 30, 44, 60, 78, 93, 107, 124}
+var _Error_index = [...]uint8{0, 9, 18, 30, 44, 64, 80, 98, 113, 127, 144}
 
 func (i Error) String() string {
 	idx := int(i) - 0

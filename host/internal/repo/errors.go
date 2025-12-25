@@ -8,9 +8,14 @@ const (
 	ErrActors
 	ErrLockActor
 	ErrUnlockActor
+	ErrGetUnlockedActors
 	ErrIsActorLocked
 	ErrResetActorLocks
 	ErrStartSession
 	ErrStopSession
 	ErrCurrentSession
 )
+
+func (err Error) Error() string {
+	return err.String()
+}

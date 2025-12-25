@@ -265,7 +265,7 @@ func (a adapter) UnlockedActors(name theme.Name) ([]actor.Description, error) {
 	for rows.Next() {
 		var name string
 		if err := rows.Scan(&name); err != nil {
-			return nil, fmt.Errorf("%w: %w: %", errSelectActorsLocks, errScan, err)
+			return nil, fmt.Errorf("%w: %w: %w", errSelectActorsLocks, errScan, err)
 		}
 		delete(actors, name)
 	}
