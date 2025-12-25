@@ -25,3 +25,8 @@ type Theatre interface {
 
 	SaveTranscriptChunk(chunk transcript.Chunk, id session.Id) error
 }
+
+type Agent interface {
+	Start() error
+	Stop() error
+}
