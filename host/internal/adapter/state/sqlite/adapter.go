@@ -188,7 +188,7 @@ UPDATE sessions SET stop8601 = ? WHERE theme = ? AND stop8601 IS NULL
 
 func (a adapter) CurrentSession(name theme.Name) (*session.Session, error) {
 	row := a.db.QueryRow(`
-SELECT id FROM sessions WHERE theme = ? AND stop8601 is NULL ORDER BY start8601 LIMIT 1
+SELECT id FROM sessions WHERE theme = ? AND stop8601 is NULL ORDER BY start8601 DESC LIMIT 1
 	`, string(name))
 	var id int
 	err := row.Scan(&id)
@@ -217,7 +217,7 @@ const iso8601 = "2006-01-02T15:04:05.000"
 
 func (a adapter) actors(id session.Id) ([]actor.Description, error) {
 	rows, err := a.db.Query(`
-SELECT actor FROM actors_locks WHERE id = ?
+SELECT actor FROM actors_locks WHERE session = ?
 	`, int(id))
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", errSelectActorsLocks, err)
