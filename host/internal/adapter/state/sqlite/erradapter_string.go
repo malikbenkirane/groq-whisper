@@ -16,12 +16,24 @@ func _() {
 	_ = x[errSelectActors-5]
 	_ = x[errSelectActorsIter-6]
 	_ = x[errSelectActorsScan-7]
-	_ = x[errUnknown-8]
+	_ = x[errExecSetLock-8]
+	_ = x[errQueryRowActorsLocks-9]
+	_ = x[errDeleteActorsLocks-10]
+	_ = x[errReadRowsAffected-11]
+	_ = x[errInsertSession-12]
+	_ = x[errUpdateSession-13]
+	_ = x[errQueryRowCurrentSession-14]
+	_ = x[errSelectActorsLocks-15]
+	_ = x[errQueryRowActors-16]
+	_ = x[errScan-17]
+	_ = x[errActorsSession-18]
+	_ = x[errThemes-19]
+	_ = x[errUnknown-20]
 }
 
-const _errAdapter_name = "errZeroerrOpenDBerrSelectThemeserrSelectThemesItererrSelectThemesScanerrSelectActorserrSelectActorsItererrSelectActorsScanerrUnknown"
+const _errAdapter_name = "errZeroerrOpenDBerrSelectThemeserrSelectThemesItererrSelectThemesScanerrSelectActorserrSelectActorsItererrSelectActorsScanerrExecSetLockerrQueryRowActorsLockserrDeleteActorsLockserrReadRowsAffectederrInsertSessionerrUpdateSessionerrQueryRowCurrentSessionerrSelectActorsLockserrQueryRowActorserrScanerrActorsSessionerrThemeserrUnknown"
 
-var _errAdapter_index = [...]uint8{0, 7, 16, 31, 50, 69, 84, 103, 122, 132}
+var _errAdapter_index = [...]uint16{0, 7, 16, 31, 50, 69, 84, 103, 122, 136, 158, 178, 197, 213, 229, 254, 274, 291, 298, 314, 323, 333}
 
 func (i errAdapter) String() string {
 	idx := int(i) - 0

@@ -16,5 +16,17 @@ const (
 	errSelectActors
 	errSelectActorsIter
 	errSelectActorsScan
+	errExecSetLock
+	errQueryRowActorsLocks
+	errDeleteActorsLocks
+	errReadRowsAffected
+	errInsertSession
+	errUpdateSession
+	errQueryRowCurrentSession
+	errSelectActorsLocks
+	errQueryRowActors
+	errScan
+	errActorsSession
+	errThemes
 	errUnknown
 )
