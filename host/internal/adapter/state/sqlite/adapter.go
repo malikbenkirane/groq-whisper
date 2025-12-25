@@ -10,6 +10,7 @@ import (
 	"github.com/malikbenkirane/groq-whisper/host/internal/domain/actor"
 	"github.com/malikbenkirane/groq-whisper/host/internal/domain/session"
 	"github.com/malikbenkirane/groq-whisper/host/internal/domain/theme"
+	"github.com/malikbenkirane/groq-whisper/host/internal/domain/transcript"
 	"github.com/malikbenkirane/groq-whisper/host/internal/repo"
 
 	_ "github.com/glebarez/go-sqlite"
@@ -258,7 +259,9 @@ func (a adapter) UnlockedActors(name theme.Name) ([]actor.Description, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", errActors, err)
 	}
-	rows, err := a.db.Query(`SELECT actor FROM actors_locks WHERE islocked = 1`)
+	rows, err := a.db.Query(`
+SELECT actor FROM actors_locks WHERE islocked = 1
+	`)
 	if err != nil {
 		return nil, fmt.Errorf("%w, %w", errSelectActorsLocks, err)
 	}
@@ -279,4 +282,14 @@ func (a adapter) UnlockedActors(name theme.Name) ([]actor.Description, error) {
 		names[i] = actor.Description{Name: actor.Name(name), Site: site}
 	}
 	return names, nil
+}
+
+func (a adapter) SaveTranscriptChunk(chunk transcript.Chunk, id session.Id) error {
+	_, err := a.db.Exec(`
+INSERT INTO tx (session, text, t8601) VALUES(?, ?, ?)
+	`, int(id), chunk.Text, chunk.Timestamp.Format(iso8601))
+	if err != nil {
+		return fmt.Errorf("%w: %w", errInsertTx, err)
+	}
+	return nil
 }

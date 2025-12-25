@@ -14,6 +14,7 @@ const (
 	ErrStartSession
 	ErrStopSession
 	ErrCurrentSession
+	ErrSaveTranscriptChunk
 )
 
 func (err Error) Error() string {
