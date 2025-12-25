@@ -29,5 +29,6 @@ const (
 	errActorsSession
 	errThemes
 	errActors
+	errInsertTx
 	errUnknown
 )

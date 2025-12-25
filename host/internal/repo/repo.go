@@ -6,6 +6,7 @@ import (
 	"github.com/malikbenkirane/groq-whisper/host/internal/domain/actor"
 	"github.com/malikbenkirane/groq-whisper/host/internal/domain/session"
 	"github.com/malikbenkirane/groq-whisper/host/internal/domain/theme"
+	"github.com/malikbenkirane/groq-whisper/host/internal/domain/transcript"
 )
 
 type Theatre interface {
@@ -21,4 +22,6 @@ type Theatre interface {
 	StartSession(name theme.Name, t time.Time) error
 	StopSession(name theme.Name, t time.Time) error
 	CurrentSession(name theme.Name) (*session.Session, error)
+
+	SaveTranscriptChunk(chunk transcript.Chunk, id session.Id) error
 }

@@ -18,11 +18,12 @@ func _() {
 	_ = x[ErrStartSession-7]
 	_ = x[ErrStopSession-8]
 	_ = x[ErrCurrentSession-9]
+	_ = x[ErrSaveTranscriptChunk-10]
 }
 
-const _Error_name = "ErrThemesErrActorsErrLockActorErrUnlockActorErrGetUnlockedActorsErrIsActorLockedErrResetActorLocksErrStartSessionErrStopSessionErrCurrentSession"
+const _Error_name = "ErrThemesErrActorsErrLockActorErrUnlockActorErrGetUnlockedActorsErrIsActorLockedErrResetActorLocksErrStartSessionErrStopSessionErrCurrentSessionErrSaveTranscriptChunk"
 
-var _Error_index = [...]uint8{0, 9, 18, 30, 44, 64, 80, 98, 113, 127, 144}
+var _Error_index = [...]uint8{0, 9, 18, 30, 44, 64, 80, 98, 113, 127, 144, 166}
 
 func (i Error) String() string {
 	idx := int(i) - 0
