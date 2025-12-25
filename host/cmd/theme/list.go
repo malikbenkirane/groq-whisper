@@ -44,7 +44,7 @@ type categoryJson struct {
 
 func fromTheme(t theme.Description) themeJson {
 	j := themeJson{
-		Name:       t.Name,
+		Name:       string(t.Name),
 		Title:      t.Title,
 		Categories: []categoryJson{},
 	}
