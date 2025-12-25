@@ -18,6 +18,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/coder/websocket"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -213,7 +214,10 @@ func newCommandSidecar() (*cobra.Command, error) {
 				err = w.Close()
 			}()
 
+			tx := make(chan string)
+			defer close(tx)
 			ctx, cancel := context.WithCancel(cmd.Context())
+			go serve(ctx, tx)
 			go func(ctx context.Context) {
 				counter := make(map[string]struct{})
 			loop:
@@ -284,4 +288,49 @@ func newCommandSidecar() (*cobra.Command, error) {
 	samplesDir = cmd.Flags().String("samples-dir", defaultDir, "where recorded samples are processed")
 
 	return cmd, nil
+}
+
+func serve(ctx context.Context, tx <-chan string) {
+	ech := make(chan error)
+	go func() {
+		for {
+			select {
+			case err := <-ech:
+				slog.Error("serve error", "err", err)
+			case <-ctx.Done():
+				slog.Info("errchec kcontext done")
+				return
+			}
+		}
+	}()
+	go func() {
+		mux := http.NewServeMux()
+		mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			conn, err := websocket.Accept(w, r, &websocket.AcceptOptions{
+				OriginPatterns: []string{"localhost:*"},
+			})
+			if err != nil {
+				slog.Warn("websocket accept", "err", err)
+				return
+			}
+			defer func() {
+				if err := conn.Close(websocket.StatusGoingAway, "done"); err != nil {
+					slog.Warn("closing websocket ..", "err", err)
+				}
+			}()
+			for {
+				select {
+				case msg := <-tx:
+					slog.Info("ws: broadcasting", "msg", msg)
+					if err := conn.Write(ctx, websocket.MessageText, []byte(msg)); err != nil {
+						slog.Error("write to socket", "err", err)
+					}
+				case <-ctx.Done():
+					slog.Info("close connection")
+					return
+				}
+			}
+		})
+	}()
+	<-ctx.Done()
 }
