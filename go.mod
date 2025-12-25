@@ -3,6 +3,7 @@ module github.com/malikbenkirane/groq-whisper
 go 1.25.4
 
 require (
+	github.com/coder/websocket v1.8.14
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/gordonklaus/portaudio v0.0.0-20250206071425-98a94950218b
 	github.com/hashicorp/serf v0.10.2
