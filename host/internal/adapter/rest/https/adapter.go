@@ -21,6 +21,8 @@ func New(r repo.Theatre, opts ...Option) (Adapter, error) {
 	mux.Handle("GET /themes", wrap(a.handleGetThemes()))
 	mux.Handle("GET /actors", wrap(a.handleGetActors()))
 	mux.Handle("GET /actors/{theme}", wrap(a.handleGetActorsTheme()))
+	mux.Handle("POST /session/{theme}", wrap(a.handlePostSession()))
+	mux.Handle("DELETE /session/{theme}", wrap(a.handleDeleteSession()))
 	return a, nil
 }
 
