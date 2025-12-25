@@ -16,14 +16,14 @@ import (
 
 func newCommandRecord() (*cobra.Command, error) {
 	var freq *int
-	var debug, sys32 *bool
+	var sys32 *bool
 	var samplesDir *string
 
 	cmd := &cobra.Command{
 		Use:     "record",
 		Aliases: []string{"rec", "r"},
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			log := newLogger(*debug)
+
 			quit := make(chan os.Signal, 1)
 			signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
@@ -40,7 +40,8 @@ func newCommandRecord() (*cobra.Command, error) {
 			encoderOpts = append(encoderOpts, sampler.EncoderOptionRoot(*samplesDir))
 
 			ctx, cancel := context.WithCancel(cmd.Context())
-			s := sampler.New(log, float64(*freq), time.Duration(time.Second*10), encoderOpts...)
+
+			s := sampler.New(float64(*freq), time.Duration(time.Second*10), encoderOpts...)
 			go s.Sample(ctx)
 
 			<-quit
@@ -57,7 +58,6 @@ func newCommandRecord() (*cobra.Command, error) {
 	defaultDir = path.Join(defaultDir, "groq-whisper-samples")
 
 	freq = cmd.Flags().IntP("freq", "f", 16000, "sample rate")
-	debug = cmd.Flags().Bool("debug", false, "set log level at debug")
 	sys32 = cmd.Flags().Bool("ffmpeg-sys32", true, "use ffmpeg from windows/sys32/groq-deps")
 	samplesDir = cmd.Flags().String("samples-dir", defaultDir, "where recorded samples are processed")
 
