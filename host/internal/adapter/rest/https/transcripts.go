@@ -30,16 +30,21 @@ func (a adapter) handlePostTranscript() customHandler {
 
 		var tx struct {
 			Tx string
-			Ts time.Time
+			Ts string
 		}
 
 		if err := json.NewDecoder(r.Body).Decode(&tx); err != nil {
 			return errInternalError, fmt.Errorf("%w: %w: %w", errDecodeTxPayload, errJsonDecode, err)
 		}
 
+		t, err := time.Parse(iso8601, tx.Ts)
+		if err != nil {
+			return errBadRequest, fmt.Errorf("parse iso8601:  %w", err)
+		}
+
 		if err := a.repo.SaveTranscriptChunk(transcript.Chunk{
 			Text:      tx.Tx,
-			Timestamp: tx.Ts,
+			Timestamp: t,
 		}, s); err != nil {
 			return errInternalError, fmt.Errorf("%w: %w", repo.ErrSaveTranscriptChunk, err)
 		}
@@ -47,3 +52,5 @@ func (a adapter) handlePostTranscript() customHandler {
 		return
 	}
 }
+
+const iso8601 = "2006-01-02T15:04:05.000"
