@@ -15,6 +15,7 @@ type Theatre interface {
 	LockActor(name actor.Name, id session.Id) error
 	UnlockActor(name actor.Name, id session.Id) error
 	IsActorLocked(name actor.Name) (*session.Id, error)
+	UnlockedActors(name theme.Name) ([]actor.Description, error)
 	ResetActorLocks() error
 
 	StartSession(name theme.Name, t time.Time) error

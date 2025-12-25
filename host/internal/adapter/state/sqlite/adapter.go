@@ -230,6 +230,9 @@ SELECT actor FROM actors_locks WHERE id = ?
 		}
 		names = append(names, name)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("%w: %w", errSelectActorsLocks, err)
+	}
 	sites := make([]string, len(names))
 	for i, name := range names {
 		var site string
@@ -248,4 +251,32 @@ SELECT site FROM actors WHERE name = ?
 		}
 	}
 	return actors, nil
+}
+
+func (a adapter) UnlockedActors(name theme.Name) ([]actor.Description, error) {
+	actors, err := a.Actors()
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", errActors, err)
+	}
+	rows, err := a.db.Query(`SELECT actor FROM actors_locks WHERE islocked = 1`)
+	if err != nil {
+		return nil, fmt.Errorf("%w, %w", errSelectActorsLocks, err)
+	}
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			return nil, fmt.Errorf("%w: %w: %", errSelectActorsLocks, errScan, err)
+		}
+		delete(actors, name)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("%w: %w", errSelectActorsLocks, err)
+	}
+	names := make([]actor.Description, len(actors))
+	i := -1
+	for name, site := range actors {
+		i++
+		names[i] = actor.Description{Name: actor.Name(name), Site: site}
+	}
+	return names, nil
 }
