@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/malikbenkirane/groq-whisper/host/internal/domain/actor"
 	"github.com/malikbenkirane/groq-whisper/host/internal/domain/theme"
 	"github.com/malikbenkirane/groq-whisper/host/internal/repo"
 )
@@ -46,6 +47,36 @@ func (a adapter) handleGetActorsTheme() customHandler {
 		}
 		if err := json.NewEncoder(w).Encode(actorsJson); err != nil {
 			return errInternalError, fmt.Errorf("%w: %w", errJsonEncode, err)
+		}
+		return
+	}
+}
+
+func (a adapter) handlePostLockActor() customHandler {
+	return func(w http.ResponseWriter, r *http.Request) (errUser error, errSys error) {
+		themeName := theme.Name(r.PathValue("theme"))
+		actorName := actor.Name(r.PathValue("actor"))
+		s, err := a.repo.CurrentSession(themeName)
+		if err != nil {
+			return errInternalError, fmt.Errorf("%w: %w", repo.ErrCurrentSession, err)
+		}
+		if err := a.repo.LockActor(actorName, s.ID); err != nil {
+			return errInternalError, fmt.Errorf("%w: %w", repo.ErrLockActor, err)
+		}
+		return
+	}
+}
+
+func (a adapter) handleDeleteLockActor() customHandler {
+	return func(w http.ResponseWriter, r *http.Request) (errUser error, errSys error) {
+		themeName := theme.Name(r.PathValue("theme"))
+		actorName := actor.Name(r.PathValue("actor"))
+		s, err := a.repo.CurrentSession(themeName)
+		if err != nil {
+			return errInternalError, fmt.Errorf("%w: %w", repo.ErrCurrentSession, err)
+		}
+		if err := a.repo.UnlockActor(actorName, s.ID); err != nil {
+			return errInternalError, fmt.Errorf("%w: %w", repo.ErrLockActor, err)
 		}
 		return
 	}
