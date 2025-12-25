@@ -28,12 +28,13 @@ func _() {
 	_ = x[errScan-17]
 	_ = x[errActorsSession-18]
 	_ = x[errThemes-19]
-	_ = x[errUnknown-20]
+	_ = x[errActors-20]
+	_ = x[errUnknown-21]
 }
 
-const _errAdapter_name = "errZeroerrOpenDBerrSelectThemeserrSelectThemesItererrSelectThemesScanerrSelectActorserrSelectActorsItererrSelectActorsScanerrExecSetLockerrQueryRowActorsLockserrDeleteActorsLockserrReadRowsAffectederrInsertSessionerrUpdateSessionerrQueryRowCurrentSessionerrSelectActorsLockserrQueryRowActorserrScanerrActorsSessionerrThemeserrUnknown"
+const _errAdapter_name = "errZeroerrOpenDBerrSelectThemeserrSelectThemesItererrSelectThemesScanerrSelectActorserrSelectActorsItererrSelectActorsScanerrExecSetLockerrQueryRowActorsLockserrDeleteActorsLockserrReadRowsAffectederrInsertSessionerrUpdateSessionerrQueryRowCurrentSessionerrSelectActorsLockserrQueryRowActorserrScanerrActorsSessionerrThemeserrActorserrUnknown"
 
-var _errAdapter_index = [...]uint16{0, 7, 16, 31, 50, 69, 84, 103, 122, 136, 158, 178, 197, 213, 229, 254, 274, 291, 298, 314, 323, 333}
+var _errAdapter_index = [...]uint16{0, 7, 16, 31, 50, 69, 84, 103, 122, 136, 158, 178, 197, 213, 229, 254, 274, 291, 298, 314, 323, 332, 342}
 
 func (i errAdapter) String() string {
 	idx := int(i) - 0
