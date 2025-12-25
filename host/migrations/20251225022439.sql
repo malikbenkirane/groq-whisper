@@ -1,2 +1,2 @@
-CREATE UNIQUE INDEX idx_theme_locks_name ON theme_locks(theme);
-CREATE UNIQUE INDEX idx_actor_locks_name ON actor_locks(theme);
+CREATE UNIQUE INDEX idx_themes_locks_name ON themes_locks(theme);
+CREATE UNIQUE INDEX idx_actors_locks_name ON actors_locks(actor);
