@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/binary"
 	"fmt"
+	"log/slog"
 	"os"
 	"os/exec"
 	"path"
@@ -12,13 +13,11 @@ import (
 	"time"
 
 	"github.com/gordonklaus/portaudio"
-	"go.uber.org/zap"
 )
 
-func New(log *zap.Logger, sampleRate float64, splitPeriod time.Duration, encoderOpts ...EncoderOption) Sampler {
+func New(sampleRate float64, splitPeriod time.Duration, encoderOpts ...EncoderOption) Sampler {
 	s := &sampler{
 		e:         NewEncoder(encoderOpts...),
-		log:       log,
 		sample:    sampleRate,
 		splitFreq: splitPeriod,
 		chunk:     make(chan chunk, 5),
@@ -27,13 +26,26 @@ func New(log *zap.Logger, sampleRate float64, splitPeriod time.Duration, encoder
 	return s
 }
 
+func DefaultSys32(root string) Sampler {
+	return &sampler{
+		e:         NewEncoder(NewSys32Opt(), EncoderOptionRoot(root)),
+		sample:    16000,
+		splitFreq: time.Second * 10,
+		chunk:     make(chan chunk, 5),
+		err:       make(chan error),
+	}
+}
+
+func NewSys32Opt() EncoderOption {
+	return EncoderOptionPath("C:\\Windows\\System32\\groq\\groq-deps\\bin\\ffmpeg")
+}
+
 type Sampler interface {
 	Sample(ctx context.Context)
 }
 
 type sampler struct {
 	e         Encoder
-	log       *zap.Logger
 	sample    float64
 	splitFreq time.Duration
 	chunk     chan chunk
@@ -43,7 +55,7 @@ type sampler struct {
 func (s sampler) Sample(ctx context.Context) {
 	go func() {
 		for err := range s.err {
-			s.log.Error("sample failed", zap.Error(err))
+			slog.Error("sample failed", "err", err)
 		}
 	}()
 	go func() {
@@ -59,16 +71,17 @@ func (s sampler) Sample(ctx context.Context) {
 func (s sampler) consume(ctx context.Context) (err error) {
 	defer func() {
 		if err != nil {
-			s.log.Error("consume failed", zap.Error(err))
+			slog.Error("consume failed", "err", err)
 		}
 	}()
 	for {
 		select {
 		case <-ctx.Done():
+			slog.Info("sampler gracefully stopping: context done")
 			return
 		case c := <-s.chunk:
 			pr := s.e.outPath(c.ts, outRaw)
-			s.log.Info("writing new chunk", zap.String("path", pr))
+			slog.Info("writitng new chunk", "to", pr)
 			f, err := os.Create(pr)
 			if err != nil {
 				return fmt.Errorf("os create %q: %w", pr, err)
@@ -98,7 +111,7 @@ func (s sampler) consume(ctx context.Context) (err error) {
 func (s sampler) stream(ctx context.Context) (err error) {
 	defer func() {
 		if err != nil {
-			s.log.Error("sample failed", zap.Error(err))
+			slog.Error("sample failed", "err", err)
 		}
 	}()
 

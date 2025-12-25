@@ -25,6 +25,7 @@ func NewCLI() (*cobra.Command, error) {
 		newCommandVersion(),
 		newCommandUpgrade(),
 		newCommandDev(),
+		newCommandServe(),
 		record)
 
 	return cmd, nil
