@@ -10,6 +10,11 @@ const (
 	errGetActors
 	errRepoActors
 	errJsonEncode
+	errJsonDecode
+	errDecodeTxPayload
+	errExpectedContentTypeJSON
+	errBadRequest
+	errStrconvSession
 	errMax
 )
 
