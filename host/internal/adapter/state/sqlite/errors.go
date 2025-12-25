@@ -28,5 +28,6 @@ const (
 	errScan
 	errActorsSession
 	errThemes
+	errActors
 	errUnknown
 )
