@@ -124,7 +124,7 @@ func (a adapter) handle(p []byte, t websocket.MessageType, socket *socket) error
 					},
 				},
 			},
-		}); err != nil {
+		}, msg.Body.tunnel.From); err != nil {
 			return fmt.Errorf("brodact actor lock: %w", err)
 		}
 	}

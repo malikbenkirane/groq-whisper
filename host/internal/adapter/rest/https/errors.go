@@ -7,6 +7,8 @@ const (
 	errUnknown errSys = iota
 	errGetThemes
 	errRepoThemes
+	errGetActors
+	errRepoActors
 	errJsonEncode
 	errMax
 )

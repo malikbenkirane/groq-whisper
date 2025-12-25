@@ -11,13 +11,15 @@ func _() {
 	_ = x[errUnknown-0]
 	_ = x[errGetThemes-1]
 	_ = x[errRepoThemes-2]
-	_ = x[errJsonEncode-3]
-	_ = x[errMax-4]
+	_ = x[errGetActors-3]
+	_ = x[errRepoActors-4]
+	_ = x[errJsonEncode-5]
+	_ = x[errMax-6]
 }
 
-const _errSys_name = "errUnknownerrGetThemeserrRepoThemeserrJsonEncodeerrMax"
+const _errSys_name = "errUnknownerrGetThemeserrRepoThemeserrGetActorserrRepoActorserrJsonEncodeerrMax"
 
-var _errSys_index = [...]uint8{0, 10, 22, 35, 48, 54}
+var _errSys_index = [...]uint8{0, 10, 22, 35, 47, 60, 73, 79}
 
 func (i errSys) String() string {
 	idx := int(i) - 0
